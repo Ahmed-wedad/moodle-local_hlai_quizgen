@@ -92,22 +92,22 @@ class analytics_external extends external_api {
         $types = $DB->get_records_sql(
             "SELECT questiontype, COUNT(*) as count,
                     AVG(validation_score) as avg_quality,
-                    SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as approved,
+                    SUM(CASE WHEN status = :approved THEN 1 ELSE 0 END) as approved,
                     AVG(regeneration_count) as avg_regens
              FROM {local_hlai_quizgen_questions}
-             WHERE courseid = ?
+             WHERE courseid = :courseid
              GROUP BY questiontype",
-            [$courseid]
+            ['courseid' => $courseid, 'approved' => 'approved']
         );
 
         // Questions by difficulty.
         $difficulties = $DB->get_records_sql(
             "SELECT difficulty, COUNT(*) as count,
-                    SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as approved
+                    SUM(CASE WHEN status = :approved THEN 1 ELSE 0 END) as approved
              FROM {local_hlai_quizgen_questions}
-             WHERE courseid = ?
+             WHERE courseid = :courseid
              GROUP BY difficulty",
-            [$courseid]
+            ['courseid' => $courseid, 'approved' => 'approved']
         );
 
         // Recent generation trend (last 30 days).

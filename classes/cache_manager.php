@@ -186,26 +186,25 @@ class cache_manager {
     public static function cleanup_expired_cache() {
         global $DB;
 
-        $deleted = 0;
         $types = ['topics', 'questions', 'distractors'];
 
+        // Build a single WHERE clause covering all types with their individual TTLs.
+        $wheres = [];
+        $params = [];
+        $i = 0;
         foreach ($types as $type) {
             $ttl = self::get_ttl_for_type($type);
             $expirytime = time() - $ttl;
+            $wheres[] = "(cachetype = :type{$i} AND timecreated < :exp{$i})";
+            $params["type{$i}"] = $type;
+            $params["exp{$i}"] = $expirytime;
+            $i++;
+        }
+        $where = implode(' OR ', $wheres);
 
-            $count = $DB->count_records_select(
-                'local_hlai_quizgen_cache',
-                'cachetype = ? AND timecreated < ?',
-                [$type, $expirytime]
-            );
-
-            $DB->delete_records_select(
-                'local_hlai_quizgen_cache',
-                'cachetype = ? AND timecreated < ?',
-                [$type, $expirytime]
-            );
-
-            $deleted += $count;
+        $deleted = $DB->count_records_select('local_hlai_quizgen_cache', $where, $params);
+        if ($deleted > 0) {
+            $DB->delete_records_select('local_hlai_quizgen_cache', $where, $params);
         }
 
         return $deleted;
@@ -227,10 +226,15 @@ class cache_manager {
 
         $types = ['topics', 'questions', 'distractors'];
 
+        // Single GROUP BY query instead of per-type queries.
+        $sql = "SELECT cachetype, COUNT(*) AS cnt, COALESCE(SUM(hits), 0) AS totalhits
+                  FROM {local_hlai_quizgen_cache}
+              GROUP BY cachetype";
+        $rows = $DB->get_records_sql($sql);
+
         foreach ($types as $type) {
-            $records = $DB->get_records('local_hlai_quizgen_cache', ['cachetype' => $type]);
-            $count = count($records);
-            $hits = array_sum(array_column($records, 'hits'));
+            $count = isset($rows[$type]) ? (int) $rows[$type]->cnt : 0;
+            $hits = isset($rows[$type]) ? (int) $rows[$type]->totalhits : 0;
 
             $stats['by_type'][$type] = [
                 'count' => $count,
@@ -328,14 +332,13 @@ class cache_manager {
     public static function get_hit_rate($cachetype) {
         global $DB;
 
-        $records = $DB->get_records('local_hlai_quizgen_cache', ['cachetype' => $cachetype]);
+        $sql = "SELECT COUNT(*) AS cnt, COALESCE(SUM(hits), 0) AS totalhits
+                  FROM {local_hlai_quizgen_cache}
+                 WHERE cachetype = :cachetype";
+        $row = $DB->get_record_sql($sql, ['cachetype' => $cachetype]);
 
-        if (empty($records)) {
-            return 0.0;
-        }
-
-        $totalaccesses = array_sum(array_column($records, 'hits'));
-        $totalentries = count($records);
+        $totalentries = (int) $row->cnt;
+        $totalaccesses = (int) $row->totalhits;
 
         return $totalentries > 0 ? $totalaccesses / $totalentries : 0.0;
     }

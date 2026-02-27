@@ -91,6 +91,7 @@ class dashboard_external extends external_api {
             $context = \context_system::instance();
         }
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:viewreports', $context);
 
         $userid = $USER->id;
 
@@ -98,40 +99,42 @@ class dashboard_external extends external_api {
         $totalquizzes = $DB->count_records_sql(
             "SELECT COUNT(DISTINCT r.id)
              FROM {local_hlai_quizgen_requests} r
-             WHERE r.userid = ? AND r.status = 'completed'",
-            [$userid]
+             WHERE r.userid = :userid AND r.status = :status",
+            ['userid' => $userid, 'status' => 'completed']
         );
 
         // Total questions generated.
         $totalquestions = $DB->count_records_sql(
             "SELECT COUNT(q.id)
              FROM {local_hlai_quizgen_questions} q
-             WHERE q.userid = ?",
-            [$userid]
+             WHERE q.userid = :userid",
+            ['userid' => $userid]
         );
 
         // Questions approved.
         $approvedquestions = $DB->count_records_sql(
             "SELECT COUNT(q.id)
              FROM {local_hlai_quizgen_questions} q
-             WHERE q.userid = ? AND q.status = 'approved'",
-            [$userid]
+             WHERE q.userid = :userid AND q.status = :status",
+            ['userid' => $userid, 'status' => 'approved']
         );
 
         // Average quality score.
         $avgquality = $DB->get_field_sql(
             "SELECT AVG(q.validation_score)
              FROM {local_hlai_quizgen_questions} q
-             WHERE q.userid = ? AND q.validation_score IS NOT NULL",
-            [$userid]
+             WHERE q.userid = :userid AND q.validation_score IS NOT NULL",
+            ['userid' => $userid]
         );
 
         // Acceptance rate.
+        [$insql, $inparams] = $DB->get_in_or_equal(['approved', 'rejected'], SQL_PARAMS_NAMED, 'st');
+        $inparams['userid'] = $userid;
         $totalreviewed = $DB->count_records_sql(
             "SELECT COUNT(q.id)
              FROM {local_hlai_quizgen_questions} q
-             WHERE q.userid = ? AND q.status IN ('approved', 'rejected')",
-            [$userid]
+             WHERE q.userid = :userid AND q.status $insql",
+            $inparams
         );
         $acceptancerate = $totalreviewed > 0 ? round(($approvedquestions / $totalreviewed) * 100, 1) : 0;
 
@@ -139,8 +142,8 @@ class dashboard_external extends external_api {
         $firsttimeapproved = $DB->count_records_sql(
             "SELECT COUNT(q.id)
              FROM {local_hlai_quizgen_questions} q
-             WHERE q.userid = ? AND q.status = 'approved' AND q.regeneration_count = 0",
-            [$userid]
+             WHERE q.userid = :userid AND q.status = :status AND q.regeneration_count = 0",
+            ['userid' => $userid, 'status' => 'approved']
         );
         $ftar = $approvedquestions > 0 ? round(($firsttimeapproved / $approvedquestions) * 100, 1) : 0;
 
@@ -221,6 +224,7 @@ class dashboard_external extends external_api {
             $context = \context_system::instance();
         }
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:viewreports', $context);
 
         $userid = $USER->id;
 
@@ -306,6 +310,7 @@ class dashboard_external extends external_api {
             $context = \context_system::instance();
         }
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:viewreports', $context);
 
         $userid = $USER->id;
 
@@ -381,6 +386,7 @@ class dashboard_external extends external_api {
             $context = \context_system::instance();
         }
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:viewreports', $context);
 
         $userid = $USER->id;
 
@@ -474,19 +480,21 @@ class dashboard_external extends external_api {
             $context = \context_system::instance();
         }
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:viewreports', $context);
 
         $userid = $USER->id;
 
         $requests = $DB->get_records_sql(
             "SELECT r.id, r.timecreated,
                     (SELECT COUNT(*) FROM {local_hlai_quizgen_questions} q
-                     WHERE q.requestid = r.id AND q.status = 'approved') as approved,
+                     WHERE q.requestid = r.id AND q.status = :approved) as approved,
                     (SELECT COUNT(*) FROM {local_hlai_quizgen_questions} q
-                     WHERE q.requestid = r.id AND q.status IN ('approved', 'rejected')) as total
+                     WHERE q.requestid = r.id AND q.status IN (:st_approved, :st_rejected)) as total
              FROM {local_hlai_quizgen_requests} r
-             WHERE r.userid = ? AND r.status = 'completed'
+             WHERE r.userid = :userid AND r.status = :completed
              ORDER BY r.timecreated ASC",
-            [$userid],
+            ['userid' => $userid, 'approved' => 'approved', 'st_approved' => 'approved',
+             'st_rejected' => 'rejected', 'completed' => 'completed'],
             0,
             $limit
         );
@@ -501,10 +509,11 @@ class dashboard_external extends external_api {
         $ftarcounts = [];
         if (!empty($requestids)) {
             [$insql, $inparams] = $DB->get_in_or_equal($requestids);
+            $inparams['ftar_status'] = 'approved';
             $ftarrecords = $DB->get_records_sql(
                 "SELECT requestid, COUNT(*) as cnt
                  FROM {local_hlai_quizgen_questions}
-                 WHERE requestid $insql AND status = 'approved' AND regeneration_count = 0
+                 WHERE requestid $insql AND status = :ftar_status AND regeneration_count = 0
                  GROUP BY requestid",
                 $inparams
             );
@@ -592,6 +601,7 @@ class dashboard_external extends external_api {
             $context = \context_system::instance();
         }
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:viewreports', $context);
 
         $userid = $USER->id;
 
@@ -670,6 +680,7 @@ class dashboard_external extends external_api {
             $context = \context_system::instance();
         }
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:viewreports', $context);
 
         $userid = $USER->id;
 
@@ -779,6 +790,7 @@ class dashboard_external extends external_api {
             $context = \context_system::instance();
         }
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:viewreports', $context);
 
         $userid = $USER->id;
 
@@ -800,10 +812,11 @@ class dashboard_external extends external_api {
         $approvedcounts = [];
         if (!empty($requestids)) {
             [$insql, $inparams] = $DB->get_in_or_equal($requestids);
+            $inparams['appr_status'] = 'approved';
             $approvedrecords = $DB->get_records_sql(
                 "SELECT requestid, COUNT(*) as cnt
                  FROM {local_hlai_quizgen_questions}
-                 WHERE requestid $insql AND status = 'approved'
+                 WHERE requestid $insql AND status = :appr_status
                  GROUP BY requestid",
                 $inparams
             );

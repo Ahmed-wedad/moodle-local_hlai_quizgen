@@ -60,21 +60,22 @@ class cleanup_old_requests extends \core\task\scheduled_task {
         $cutofftime = time() - ($cleanupdays * 86400);
 
         // Find old requests that are completed or failed.
+        [$insql, $inparams] = $DB->get_in_or_equal(['completed', 'failed'], SQL_PARAMS_NAMED, 'st');
+        $inparams['cutoff'] = $cutofftime;
         $sql = "SELECT id FROM {local_hlai_quizgen_requests}
-                 WHERE (status = 'completed' OR status = 'failed')
+                 WHERE status $insql
                    AND timecompleted < :cutoff";
 
-        $requests = $DB->get_records_sql($sql, ['cutoff' => $cutofftime]);
+        $rs = $DB->get_recordset_sql($sql, $inparams);
 
-        if (empty($requests)) {
+        if (!$rs->valid()) {
+            $rs->close();
             mtrace('No old requests to cleanup');
             return;
         }
 
-        mtrace('Found ' . count($requests) . ' old requests to delete');
-
         $deletecount = 0;
-        foreach ($requests as $request) {
+        foreach ($rs as $request) {
             try {
                 $this->delete_request($request->id);
                 $deletecount++;
@@ -82,6 +83,7 @@ class cleanup_old_requests extends \core\task\scheduled_task {
                 mtrace('ERROR deleting request ' . $request->id . ': ' . $e->getMessage());
             }
         }
+        $rs->close();
 
         mtrace('Deleted ' . $deletecount . ' old requests');
     }
@@ -99,13 +101,12 @@ class cleanup_old_requests extends \core\task\scheduled_task {
         $transaction = $DB->start_delegated_transaction();
 
         try {
-            // Get questions for this request.
-            $questions = $DB->get_records('local_hlai_quizgen_questions', ['requestid' => $requestid]);
-
-            // Delete answers for each question.
-            foreach ($questions as $question) {
+            // Get questions for this request and delete their answers.
+            $qrs = $DB->get_recordset('local_hlai_quizgen_questions', ['requestid' => $requestid], '', 'id');
+            foreach ($qrs as $question) {
                 $DB->delete_records('local_hlai_quizgen_answers', ['questionid' => $question->id]);
             }
+            $qrs->close();
 
             // Delete questions.
             $DB->delete_records('local_hlai_quizgen_questions', ['requestid' => $requestid]);

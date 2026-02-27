@@ -33,34 +33,32 @@ if ($hassiteconfig) {
 
     // Show warning if gateway is not configured.
     if (!$gatewayready) {
-        $warningmsg = 'AI Service not configured. Please enter your API Key below to enable quiz generation.';
         $settings->add(new admin_setting_heading(
             'local_hlai_quizgen/gateway_warning',
             '',
-            '<div class="alert alert-warning">' . $warningmsg . '</div>'
+            '<div class="alert alert-warning">' . get_string('gateway_warning_msg', 'local_hlai_quizgen') . '</div>'
         ));
     }
 
     // Gateway Configuration Section.
     $settings->add(new admin_setting_heading(
         'local_hlai_quizgen/gateway_heading',
-        'Human Logic AI Service Configuration',
-        'Enter your Human Logic API key to enable AI-powered quiz generation. ' .
-        'This plugin requires a commercial license to function. Contact Human Logic Software LLC for access.'
+        get_string('gateway_heading', 'local_hlai_quizgen'),
+        get_string('gateway_heading_desc', 'local_hlai_quizgen')
     ));
 
     // Gateway API Key setting.
     $settings->add(new admin_setting_configpasswordunmask(
         'local_hlai_quizgen/gatewaykey',
-        'AI Service API Key',
-        'Your Human Logic API key (contact support@human-logic.com for access)',
+        get_string('gatewaykey', 'local_hlai_quizgen'),
+        get_string('gatewaykey_desc', 'local_hlai_quizgen'),
         ''
     ));
 
     // Settings heading.
     $settings->add(new admin_setting_heading(
         'local_hlai_quizgen/settings_heading',
-        'Plugin Settings',
+        get_string('settings', 'local_hlai_quizgen'),
         ''
     ));
 
@@ -222,6 +220,27 @@ if ($hassiteconfig) {
         get_string('max_regenerations_desc', 'local_hlai_quizgen'),
         5,
         PARAM_INT
+    ));
+
+    // PDF extraction tool paths.
+    $settings->add(new admin_setting_heading(
+        'local_hlai_quizgen/pdftools_heading',
+        get_string('pdftools_heading', 'local_hlai_quizgen'),
+        get_string('pdftools_heading_desc', 'local_hlai_quizgen')
+    ));
+
+    $settings->add(new admin_setting_configexecutable(
+        'local_hlai_quizgen/pathtopdftotext',
+        get_string('pathtopdftotext', 'local_hlai_quizgen'),
+        get_string('pathtopdftotext_desc', 'local_hlai_quizgen'),
+        ''
+    ));
+
+    $settings->add(new admin_setting_configexecutable(
+        'local_hlai_quizgen/pathtogs',
+        get_string('pathtogs', 'local_hlai_quizgen'),
+        get_string('pathtogs_desc', 'local_hlai_quizgen'),
+        ''
     ));
 
     // Add settings page directly to localplugins (like hlai_grading).

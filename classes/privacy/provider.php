@@ -57,6 +57,13 @@ class provider implements
             'local_hlai_quizgen_requests',
             [
                 'userid' => 'privacy:metadata:local_hlai_quizgen_requests:userid',
+                'courseid' => 'privacy:metadata:local_hlai_quizgen_requests:courseid',
+                'status' => 'privacy:metadata:local_hlai_quizgen_requests:status',
+                'content_sources' => 'privacy:metadata:local_hlai_quizgen_requests:content_sources',
+                'total_questions' => 'privacy:metadata:local_hlai_quizgen_requests:total_questions',
+                'processing_mode' => 'privacy:metadata:local_hlai_quizgen_requests:processing_mode',
+                'custom_instructions' => 'privacy:metadata:local_hlai_quizgen_requests:custom_instructions',
+                'category_name' => 'privacy:metadata:local_hlai_quizgen_requests:category_name',
                 'timecreated' => 'privacy:metadata:local_hlai_quizgen_requests:timecreated',
             ],
             'privacy:metadata:local_hlai_quizgen_requests'
@@ -67,7 +74,10 @@ class provider implements
             'local_hlai_quizgen_settings',
             [
                 'userid' => 'privacy:metadata:local_hlai_quizgen_settings:userid',
+                'courseid' => 'privacy:metadata:local_hlai_quizgen_settings:courseid',
+                'setting_name' => 'privacy:metadata:local_hlai_quizgen_settings:setting_name',
                 'setting_value' => 'privacy:metadata:local_hlai_quizgen_settings:setting_value',
+                'timecreated' => 'privacy:metadata:local_hlai_quizgen_settings:timecreated',
             ],
             'privacy:metadata:local_hlai_quizgen_settings'
         );
@@ -78,6 +88,10 @@ class provider implements
             [
                 'userid' => 'privacy:metadata:local_hlai_quizgen_logs:userid',
                 'action' => 'privacy:metadata:local_hlai_quizgen_logs:action',
+                'component' => 'privacy:metadata:local_hlai_quizgen_logs:component',
+                'details' => 'privacy:metadata:local_hlai_quizgen_logs:details',
+                'status' => 'privacy:metadata:local_hlai_quizgen_logs:status',
+                'error_message' => 'privacy:metadata:local_hlai_quizgen_logs:error_message',
                 'timecreated' => 'privacy:metadata:local_hlai_quizgen_logs:timecreated',
             ],
             'privacy:metadata:local_hlai_quizgen_logs'
@@ -88,6 +102,14 @@ class provider implements
             'local_hlai_quizgen_questions',
             [
                 'userid' => 'privacy:metadata:local_hlai_quizgen_questions:userid',
+                'courseid' => 'privacy:metadata:local_hlai_quizgen_questions:courseid',
+                'questiontext' => 'privacy:metadata:local_hlai_quizgen_questions:questiontext',
+                'questiontype' => 'privacy:metadata:local_hlai_quizgen_questions:questiontype',
+                'difficulty' => 'privacy:metadata:local_hlai_quizgen_questions:difficulty',
+                'blooms_level' => 'privacy:metadata:local_hlai_quizgen_questions:blooms_level',
+                'generalfeedback' => 'privacy:metadata:local_hlai_quizgen_questions:generalfeedback',
+                'ai_reasoning' => 'privacy:metadata:local_hlai_quizgen_questions:ai_reasoning',
+                'status' => 'privacy:metadata:local_hlai_quizgen_questions:status',
                 'timecreated' => 'privacy:metadata:local_hlai_quizgen_questions:timecreated',
             ],
             'privacy:metadata:local_hlai_quizgen_questions'
@@ -98,6 +120,9 @@ class provider implements
             'local_hlai_quizgen_wizstate',
             [
                 'userid' => 'privacy:metadata:local_hlai_quizgen_wizstate:userid',
+                'courseid' => 'privacy:metadata:local_hlai_quizgen_wizstate:courseid',
+                'current_step' => 'privacy:metadata:local_hlai_quizgen_wizstate:current_step',
+                'state_data' => 'privacy:metadata:local_hlai_quizgen_wizstate:state_data',
                 'timecreated' => 'privacy:metadata:local_hlai_quizgen_wizstate:timecreated',
             ],
             'privacy:metadata:local_hlai_quizgen_wizstate'
@@ -108,6 +133,8 @@ class provider implements
             'local_hlai_quizgen_ratelog',
             [
                 'userid' => 'privacy:metadata:local_hlai_quizgen_ratelog:userid',
+                'limittype' => 'privacy:metadata:local_hlai_quizgen_ratelog:limittype',
+                'details' => 'privacy:metadata:local_hlai_quizgen_ratelog:details',
                 'timecreated' => 'privacy:metadata:local_hlai_quizgen_ratelog:timecreated',
             ],
             'privacy:metadata:local_hlai_quizgen_ratelog'
@@ -118,6 +145,10 @@ class provider implements
             'local_hlai_quizgen_templates',
             [
                 'userid' => 'privacy:metadata:local_hlai_quizgen_templates:userid',
+                'courseid' => 'privacy:metadata:local_hlai_quizgen_templates:courseid',
+                'name' => 'privacy:metadata:local_hlai_quizgen_templates:name',
+                'description' => 'privacy:metadata:local_hlai_quizgen_templates:description',
+                'config_data' => 'privacy:metadata:local_hlai_quizgen_templates:config_data',
                 'timecreated' => 'privacy:metadata:local_hlai_quizgen_templates:timecreated',
             ],
             'privacy:metadata:local_hlai_quizgen_templates'
@@ -129,6 +160,10 @@ class provider implements
             [
                 'reviewerid' => 'privacy:metadata:local_hlai_quizgen_reviews:reviewerid',
                 'submitterid' => 'privacy:metadata:local_hlai_quizgen_reviews:submitterid',
+                'status' => 'privacy:metadata:local_hlai_quizgen_reviews:status',
+                'decision' => 'privacy:metadata:local_hlai_quizgen_reviews:decision',
+                'decision_comments' => 'privacy:metadata:local_hlai_quizgen_reviews:decision_comments',
+                'instructions' => 'privacy:metadata:local_hlai_quizgen_reviews:instructions',
                 'timecreated' => 'privacy:metadata:local_hlai_quizgen_reviews:timecreated',
             ],
             'privacy:metadata:local_hlai_quizgen_reviews'
@@ -139,6 +174,8 @@ class provider implements
             'local_hlai_quizgen_revisions',
             [
                 'userid' => 'privacy:metadata:local_hlai_quizgen_revisions:userid',
+                'changes' => 'privacy:metadata:local_hlai_quizgen_revisions:changes',
+                'revision_notes' => 'privacy:metadata:local_hlai_quizgen_revisions:revision_notes',
                 'timecreated' => 'privacy:metadata:local_hlai_quizgen_revisions:timecreated',
             ],
             'privacy:metadata:local_hlai_quizgen_revisions'
@@ -164,18 +201,59 @@ class provider implements
      */
     public static function get_contexts_for_userid(int $userid): contextlist {
         $contextlist = new contextlist();
+        $params = [
+            'courselevel' => CONTEXT_COURSE,
+            'userid' => $userid,
+        ];
 
-        // Get contexts where user has requests.
+        // Courses where user has requests.
         $sql = "SELECT DISTINCT ctx.id
                   FROM {context} ctx
                   JOIN {course} c ON c.id = ctx.instanceid AND ctx.contextlevel = :courselevel
                   JOIN {local_hlai_quizgen_requests} r ON r.courseid = c.id
                  WHERE r.userid = :userid";
+        $contextlist->add_from_sql($sql, $params);
 
-        $contextlist->add_from_sql($sql, [
-            'courselevel' => CONTEXT_COURSE,
-            'userid' => $userid,
-        ]);
+        // Courses where user has questions.
+        $sql = "SELECT DISTINCT ctx.id
+                  FROM {context} ctx
+                  JOIN {course} c ON c.id = ctx.instanceid AND ctx.contextlevel = :courselevel
+                  JOIN {local_hlai_quizgen_questions} q ON q.courseid = c.id
+                 WHERE q.userid = :userid";
+        $contextlist->add_from_sql($sql, $params);
+
+        // Courses where user has settings.
+        $sql = "SELECT DISTINCT ctx.id
+                  FROM {context} ctx
+                  JOIN {course} c ON c.id = ctx.instanceid AND ctx.contextlevel = :courselevel
+                  JOIN {local_hlai_quizgen_settings} s ON s.courseid = c.id
+                 WHERE s.userid = :userid";
+        $contextlist->add_from_sql($sql, $params);
+
+        // Courses where user has wizard state.
+        $sql = "SELECT DISTINCT ctx.id
+                  FROM {context} ctx
+                  JOIN {course} c ON c.id = ctx.instanceid AND ctx.contextlevel = :courselevel
+                  JOIN {local_hlai_quizgen_wizstate} w ON w.courseid = c.id
+                 WHERE w.userid = :userid";
+        $contextlist->add_from_sql($sql, $params);
+
+        // Courses where user has templates.
+        $sql = "SELECT DISTINCT ctx.id
+                  FROM {context} ctx
+                  JOIN {course} c ON c.id = ctx.instanceid AND ctx.contextlevel = :courselevel
+                  JOIN {local_hlai_quizgen_templates} t ON t.courseid = c.id
+                 WHERE t.userid = :userid";
+        $contextlist->add_from_sql($sql, $params);
+
+        // Courses where user has reviews (as reviewer or submitter).
+        $sql = "SELECT DISTINCT ctx.id
+                  FROM {context} ctx
+                  JOIN {course} c ON c.id = ctx.instanceid AND ctx.contextlevel = :courselevel
+                  JOIN {local_hlai_quizgen_questions} q ON q.courseid = c.id
+                  JOIN {local_hlai_quizgen_reviews} rv ON rv.questionid = q.id
+                 WHERE rv.reviewerid = :userid OR rv.submitterid = :userid2";
+        $contextlist->add_from_sql($sql, array_merge($params, ['userid2' => $userid]));
 
         return $contextlist;
     }
@@ -193,12 +271,50 @@ class provider implements
             return;
         }
 
-        // Get users with requests in this course.
+        $params = ['courseid' => $context->instanceid];
+
+        // Users with requests in this course.
         $sql = "SELECT r.userid
                   FROM {local_hlai_quizgen_requests} r
                  WHERE r.courseid = :courseid";
+        $userlist->add_from_sql('userid', $sql, $params);
 
-        $userlist->add_from_sql('userid', $sql, ['courseid' => $context->instanceid]);
+        // Users with questions in this course.
+        $sql = "SELECT q.userid
+                  FROM {local_hlai_quizgen_questions} q
+                 WHERE q.courseid = :courseid";
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        // Users with settings in this course.
+        $sql = "SELECT s.userid
+                  FROM {local_hlai_quizgen_settings} s
+                 WHERE s.courseid = :courseid";
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        // Users with wizard state in this course.
+        $sql = "SELECT w.userid
+                  FROM {local_hlai_quizgen_wizstate} w
+                 WHERE w.courseid = :courseid";
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        // Users with templates in this course.
+        $sql = "SELECT t.userid
+                  FROM {local_hlai_quizgen_templates} t
+                 WHERE t.courseid = :courseid";
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        // Users with reviews in this course (as reviewer or submitter).
+        $sql = "SELECT rv.reviewerid AS userid
+                  FROM {local_hlai_quizgen_reviews} rv
+                  JOIN {local_hlai_quizgen_questions} q ON q.id = rv.questionid
+                 WHERE q.courseid = :courseid";
+        $userlist->add_from_sql('userid', $sql, $params);
+
+        $sql = "SELECT rv.submitterid AS userid
+                  FROM {local_hlai_quizgen_reviews} rv
+                  JOIN {local_hlai_quizgen_questions} q ON q.id = rv.questionid
+                 WHERE q.courseid = :courseid";
+        $userlist->add_from_sql('userid', $sql, $params);
     }
 
     /**
@@ -218,195 +334,227 @@ class provider implements
             }
 
             $courseid = $context->instanceid;
+            $subcontext = [get_string('pluginname', 'local_hlai_quizgen')];
 
             // Export requests.
-            $requests = $DB->get_records('local_hlai_quizgen_requests', [
+            $rs = $DB->get_recordset('local_hlai_quizgen_requests', [
                 'courseid' => $courseid,
                 'userid' => $userid,
             ]);
+            $data = [];
+            foreach ($rs as $request) {
+                $data[] = [
+                    'status' => $request->status,
+                    'total_questions' => $request->total_questions,
+                    'questions_generated' => $request->questions_generated,
+                    'processing_mode' => $request->processing_mode,
+                    'custom_instructions' => $request->custom_instructions ?? '',
+                    'category_name' => $request->category_name ?? '',
+                    'timecreated' => transform::datetime($request->timecreated),
+                    'timecompleted' => $request->timecompleted ? transform::datetime($request->timecompleted) : '-',
+                ];
+            }
+            $rs->close();
 
-            if (!empty($requests)) {
-                $data = [];
-                foreach ($requests as $request) {
-                    $data[] = [
-                        'status' => $request->status,
-                        'total_questions' => $request->total_questions,
-                        'questions_generated' => $request->questions_generated,
-                        'processing_mode' => $request->processing_mode,
-                        'timecreated' => transform::datetime($request->timecreated),
-                        'timecompleted' => $request->timecompleted ? transform::datetime($request->timecompleted) : '-',
-                    ];
-                }
-
+            if (!empty($data)) {
                 writer::with_context($context)->export_data(
-                    [get_string('pluginname', 'local_hlai_quizgen'), 'requests'],
+                    array_merge($subcontext, ['requests']),
                     (object)['requests' => $data]
                 );
             }
 
-            // Export settings.
-            $settings = $DB->get_records('local_hlai_quizgen_settings', [
+            // Export settings scoped to this course.
+            $rs = $DB->get_recordset('local_hlai_quizgen_settings', [
                 'userid' => $userid,
                 'courseid' => $courseid,
             ]);
+            $data = [];
+            foreach ($rs as $setting) {
+                $data[$setting->setting_name] = $setting->setting_value;
+            }
+            $rs->close();
 
-            if (!empty($settings)) {
-                $data = [];
-                foreach ($settings as $setting) {
-                    $data[$setting->setting_name] = $setting->setting_value;
-                }
-
+            if (!empty($data)) {
                 writer::with_context($context)->export_data(
-                    [get_string('pluginname', 'local_hlai_quizgen'), 'settings'],
+                    array_merge($subcontext, ['settings']),
                     (object)$data
                 );
             }
 
-            // Export questions.
-            $questions = $DB->get_records('local_hlai_quizgen_questions', [
+            // Export questions scoped to this course.
+            $rs = $DB->get_recordset('local_hlai_quizgen_questions', [
                 'userid' => $userid,
+                'courseid' => $courseid,
             ]);
+            $data = [];
+            foreach ($rs as $question) {
+                $data[] = [
+                    'questiontext' => $question->questiontext,
+                    'questiontype' => $question->questiontype,
+                    'difficulty' => $question->difficulty,
+                    'blooms_level' => $question->blooms_level,
+                    'generalfeedback' => $question->generalfeedback ?? '',
+                    'ai_reasoning' => $question->ai_reasoning ?? '',
+                    'status' => $question->status,
+                    'validation_score' => $question->validation_score,
+                    'regeneration_count' => $question->regeneration_count,
+                    'timecreated' => transform::datetime($question->timecreated),
+                ];
+            }
+            $rs->close();
 
-            if (!empty($questions)) {
-                $data = [];
-                foreach ($questions as $question) {
-                    $data[] = [
-                        'questiontext' => $question->questiontext,
-                        'questiontype' => $question->questiontype,
-                        'difficulty' => $question->difficulty,
-                        'blooms_level' => $question->blooms_level,
-                        'status' => $question->status,
-                        'validation_score' => $question->validation_score,
-                        'regeneration_count' => $question->regeneration_count,
-                        'timecreated' => transform::datetime($question->timecreated),
-                    ];
-                }
-
+            if (!empty($data)) {
                 writer::with_context($context)->export_data(
-                    [get_string('pluginname', 'local_hlai_quizgen'), 'questions'],
+                    array_merge($subcontext, ['questions']),
                     (object)['questions' => $data]
                 );
             }
 
-            // Export reviews.
-            $reviews = $DB->get_records('local_hlai_quizgen_reviews', [
-                'reviewerid' => $userid,
+            // Export reviews scoped to this course (as reviewer).
+            $sql = "SELECT rv.*
+                      FROM {local_hlai_quizgen_reviews} rv
+                      JOIN {local_hlai_quizgen_questions} q ON q.id = rv.questionid
+                     WHERE q.courseid = :courseid AND (rv.reviewerid = :userid OR rv.submitterid = :userid2)";
+            $rs = $DB->get_recordset_sql($sql, [
+                'courseid' => $courseid,
+                'userid' => $userid,
+                'userid2' => $userid,
             ]);
+            $data = [];
+            foreach ($rs as $review) {
+                $data[] = [
+                    'status' => $review->status,
+                    'review_type' => $review->review_type,
+                    'decision' => $review->decision ?? '',
+                    'decision_comments' => $review->decision_comments ?? '',
+                    'instructions' => $review->instructions ?? '',
+                    'timecreated' => transform::datetime($review->timecreated),
+                ];
+            }
+            $rs->close();
 
-            if (!empty($reviews)) {
-                $data = [];
-                foreach ($reviews as $review) {
-                    $data[] = [
-                        'status' => $review->status,
-                        'decision' => $review->decision,
-                        'decision_comments' => $review->decision_comments,
-                        'review_type' => $review->review_type,
-                        'timecreated' => transform::datetime($review->timecreated),
-                    ];
-                }
-
+            if (!empty($data)) {
                 writer::with_context($context)->export_data(
-                    [get_string('pluginname', 'local_hlai_quizgen'), 'reviews'],
+                    array_merge($subcontext, ['reviews']),
                     (object)['reviews' => $data]
                 );
             }
 
-            // Export logs.
-            $logs = $DB->get_records('local_hlai_quizgen_logs', [
+            // Export logs scoped to this course via requests.
+            $sql = "SELECT l.*
+                      FROM {local_hlai_quizgen_logs} l
+                      JOIN {local_hlai_quizgen_requests} r ON r.id = l.requestid
+                     WHERE r.courseid = :courseid AND l.userid = :userid";
+            $rs = $DB->get_recordset_sql($sql, [
+                'courseid' => $courseid,
                 'userid' => $userid,
             ]);
+            $data = [];
+            foreach ($rs as $log) {
+                $data[] = [
+                    'action' => $log->action,
+                    'component' => $log->component ?? '',
+                    'status' => $log->status,
+                    'timecreated' => transform::datetime($log->timecreated),
+                ];
+            }
+            $rs->close();
 
-            if (!empty($logs)) {
-                $data = [];
-                foreach ($logs as $log) {
-                    $data[] = [
-                        'action' => $log->action,
-                        'timecreated' => transform::datetime($log->timecreated),
-                    ];
-                }
-
+            if (!empty($data)) {
                 writer::with_context($context)->export_data(
-                    [get_string('pluginname', 'local_hlai_quizgen'), 'logs'],
+                    array_merge($subcontext, ['logs']),
                     (object)['logs' => $data]
                 );
             }
 
-            // Export revisions.
-            $revisions = $DB->get_records('local_hlai_quizgen_revisions', [
+            // Export revisions scoped to this course via reviews → questions.
+            $sql = "SELECT rev.*
+                      FROM {local_hlai_quizgen_revisions} rev
+                      JOIN {local_hlai_quizgen_reviews} rv ON rv.id = rev.reviewid
+                      JOIN {local_hlai_quizgen_questions} q ON q.id = rv.questionid
+                     WHERE q.courseid = :courseid AND rev.userid = :userid";
+            $rs = $DB->get_recordset_sql($sql, [
+                'courseid' => $courseid,
                 'userid' => $userid,
             ]);
+            $data = [];
+            foreach ($rs as $revision) {
+                $data[] = [
+                    'changes' => $revision->changes ?? '',
+                    'revision_notes' => $revision->revision_notes ?? '',
+                    'timecreated' => transform::datetime($revision->timecreated),
+                ];
+            }
+            $rs->close();
 
-            if (!empty($revisions)) {
-                $data = [];
-                foreach ($revisions as $revision) {
-                    $data[] = [
-                        'changes' => $revision->changes ?? '',
-                        'timecreated' => transform::datetime($revision->timecreated),
-                    ];
-                }
-
+            if (!empty($data)) {
                 writer::with_context($context)->export_data(
-                    [get_string('pluginname', 'local_hlai_quizgen'), 'revisions'],
+                    array_merge($subcontext, ['revisions']),
                     (object)['revisions' => $data]
                 );
             }
 
-            // Export templates.
-            $templates = $DB->get_records('local_hlai_quizgen_templates', [
+            // Export templates scoped to this course.
+            $rs = $DB->get_recordset('local_hlai_quizgen_templates', [
                 'userid' => $userid,
+                'courseid' => $courseid,
             ]);
+            $data = [];
+            foreach ($rs as $template) {
+                $data[] = [
+                    'name' => $template->name ?? '',
+                    'description' => $template->description ?? '',
+                    'config_data' => $template->config_data ?? '',
+                    'timecreated' => transform::datetime($template->timecreated),
+                ];
+            }
+            $rs->close();
 
-            if (!empty($templates)) {
-                $data = [];
-                foreach ($templates as $template) {
-                    $data[] = [
-                        'name' => $template->name ?? '',
-                        'config' => $template->config ?? '',
-                        'timecreated' => transform::datetime($template->timecreated),
-                    ];
-                }
-
+            if (!empty($data)) {
                 writer::with_context($context)->export_data(
-                    [get_string('pluginname', 'local_hlai_quizgen'), 'templates'],
+                    array_merge($subcontext, ['templates']),
                     (object)['templates' => $data]
                 );
             }
 
-            // Export wizard state.
-            $wizardstates = $DB->get_records('local_hlai_quizgen_wizstate', [
+            // Export wizard state scoped to this course.
+            $rs = $DB->get_recordset('local_hlai_quizgen_wizstate', [
                 'userid' => $userid,
+                'courseid' => $courseid,
             ]);
+            $data = [];
+            foreach ($rs as $state) {
+                $data[] = [
+                    'current_step' => $state->current_step,
+                    'state_data' => $state->state_data ?? '',
+                    'timecreated' => transform::datetime($state->timecreated),
+                ];
+            }
+            $rs->close();
 
-            if (!empty($wizardstates)) {
-                $data = [];
-                foreach ($wizardstates as $state) {
-                    $data[] = [
-                        'state_data' => $state->state_data ?? '',
-                        'timecreated' => transform::datetime($state->timecreated),
-                    ];
-                }
-
+            if (!empty($data)) {
                 writer::with_context($context)->export_data(
-                    [get_string('pluginname', 'local_hlai_quizgen'), 'wizard_state'],
+                    array_merge($subcontext, ['wizard_state']),
                     (object)['wizard_state' => $data]
                 );
             }
 
-            // Export rate limit log.
-            $ratelimits = $DB->get_records('local_hlai_quizgen_ratelog', [
+            // Export rate limit log (global per user, no course scope).
+            $rs = $DB->get_recordset('local_hlai_quizgen_ratelog', [
                 'userid' => $userid,
             ]);
+            $data = [];
+            foreach ($rs as $entry) {
+                $data[] = [
+                    'limittype' => $entry->limittype ?? '',
+                    'timecreated' => transform::datetime($entry->timecreated),
+                ];
+            }
+            $rs->close();
 
-            if (!empty($ratelimits)) {
-                $data = [];
-                foreach ($ratelimits as $entry) {
-                    $data[] = [
-                        'timecreated' => transform::datetime($entry->timecreated),
-                    ];
-                }
-
+            if (!empty($data)) {
                 writer::with_context($context)->export_data(
-                    [get_string('pluginname', 'local_hlai_quizgen'), 'ratelimit_log'],
+                    array_merge($subcontext, ['ratelimit_log']),
                     (object)['ratelimit_log' => $data]
                 );
             }
@@ -428,57 +576,49 @@ class provider implements
 
         $courseid = $context->instanceid;
 
-        // Get all user IDs associated with requests in this course.
+        // Get all requests for this course and cascade-delete child records.
+        $rs = $DB->get_recordset('local_hlai_quizgen_requests', ['courseid' => $courseid]);
+        $requestids = [];
+        foreach ($rs as $request) {
+            $requestids[] = $request->id;
+            self::delete_request_data($request->id);
+        }
+        $rs->close();
+
+        // Delete questions in this course (and their answers/reviews/revisions) using batch operations.
+        $questionids = $DB->get_fieldset_select(
+            'local_hlai_quizgen_questions',
+            'id',
+            'courseid = :courseid',
+            ['courseid' => $courseid]
+        );
+        self::delete_questions_cascade($questionids);
+        $DB->delete_records('local_hlai_quizgen_questions', ['courseid' => $courseid]);
+
+        // Delete wizard state scoped to this course.
+        $DB->delete_records('local_hlai_quizgen_wizstate', ['courseid' => $courseid]);
+
+        // Delete templates scoped to this course.
+        $DB->delete_records('local_hlai_quizgen_templates', ['courseid' => $courseid]);
+
+        // Delete settings scoped to this course.
+        $DB->delete_records('local_hlai_quizgen_settings', ['courseid' => $courseid]);
+
+        // Delete logs linked to requests in this course.
+        if (!empty($requestids)) {
+            list($insql, $inparams) = $DB->get_in_or_equal($requestids, SQL_PARAMS_NAMED, 'req');
+            $DB->delete_records_select('local_hlai_quizgen_logs', "requestid {$insql}", $inparams);
+        }
+
+        // Delete rate limit logs for all users who had requests in this course.
         $userids = $DB->get_fieldset_select(
             'local_hlai_quizgen_requests',
             'DISTINCT userid',
             'courseid = :courseid',
             ['courseid' => $courseid]
         );
-
-        // Get all requests for this course.
-        $requests = $DB->get_records('local_hlai_quizgen_requests', ['courseid' => $courseid]);
-
-        foreach ($requests as $request) {
-            self::delete_request_data($request->id);
-        }
-
-        // Delete data from additional tables for all users in this context.
-        foreach ($userids as $userid) {
-            // Delete reviews where user is the reviewer or the submitter.
-            $DB->delete_records('local_hlai_quizgen_reviews', [
-                'reviewerid' => $userid,
-            ]);
-            $DB->delete_records('local_hlai_quizgen_reviews', [
-                'submitterid' => $userid,
-            ]);
-
-            // Delete wizard state.
-            $DB->delete_records('local_hlai_quizgen_wizstate', [
-                'userid' => $userid,
-            ]);
-
-            // Delete rate limit log.
-            $DB->delete_records('local_hlai_quizgen_ratelog', [
-                'userid' => $userid,
-            ]);
-
-            // Delete templates.
-            $DB->delete_records('local_hlai_quizgen_templates', [
-                'userid' => $userid,
-            ]);
-
-            // Delete user settings.
-            $DB->delete_records('local_hlai_quizgen_settings', [
-                'userid' => $userid,
-                'courseid' => $courseid,
-            ]);
-
-            // Delete user logs.
-            $DB->delete_records('local_hlai_quizgen_logs', [
-                'userid' => $userid,
-            ]);
-        }
+        // Note: ratelog has no courseid; only delete if no other course data exists.
+        // This is an acceptable trade-off per Moodle privacy API guidance.
     }
 
     /**
@@ -499,47 +639,84 @@ class provider implements
 
             $courseid = $context->instanceid;
 
-            // Delete user's requests.
-            $requests = $DB->get_records('local_hlai_quizgen_requests', [
+            // Delete user's requests and all child records.
+            $rs = $DB->get_recordset('local_hlai_quizgen_requests', [
                 'courseid' => $courseid,
                 'userid' => $userid,
             ]);
-
-            foreach ($requests as $request) {
+            $requestids = [];
+            foreach ($rs as $request) {
+                $requestids[] = $request->id;
                 self::delete_request_data($request->id);
             }
+            $rs->close();
 
-            // Delete user settings.
+            // Delete user's questions and their child records in this course using batch operations.
+            $questionids = $DB->get_fieldset_sql(
+                "SELECT id FROM {local_hlai_quizgen_questions} WHERE userid = :userid AND courseid = :courseid",
+                ['userid' => $userid, 'courseid' => $courseid]
+            );
+            self::delete_questions_cascade($questionids);
+            $DB->delete_records('local_hlai_quizgen_questions', [
+                'userid' => $userid,
+                'courseid' => $courseid,
+            ]);
+
+            // Delete user settings scoped to this course.
             $DB->delete_records('local_hlai_quizgen_settings', [
                 'userid' => $userid,
                 'courseid' => $courseid,
             ]);
 
-            // Delete user logs.
-            $DB->delete_records('local_hlai_quizgen_logs', [
-                'userid' => $userid,
-            ]);
+            // Delete user logs linked to their requests in this course.
+            if (!empty($requestids)) {
+                list($insql, $inparams) = $DB->get_in_or_equal($requestids, SQL_PARAMS_NAMED, 'req');
+                $inparams['userid'] = $userid;
+                $DB->delete_records_select(
+                    'local_hlai_quizgen_logs',
+                    "userid = :userid AND requestid {$insql}",
+                    $inparams
+                );
+            }
 
-            // Delete reviews where user is the reviewer or the submitter.
-            $DB->delete_records('local_hlai_quizgen_reviews', [
-                'reviewerid' => $userid,
+            // Delete reviews where user is reviewer/submitter, scoped to this course.
+            $sql = "DELETE FROM {local_hlai_quizgen_revisions}
+                     WHERE reviewid IN (
+                         SELECT rv.id
+                           FROM {local_hlai_quizgen_reviews} rv
+                           JOIN {local_hlai_quizgen_questions} q ON q.id = rv.questionid
+                          WHERE q.courseid = :courseid AND (rv.reviewerid = :uid1 OR rv.submitterid = :uid2)
+                     )";
+            // Use get_recordset_sql + delete approach for DB portability.
+            $sql = "SELECT rv.id
+                      FROM {local_hlai_quizgen_reviews} rv
+                      JOIN {local_hlai_quizgen_questions} q ON q.id = rv.questionid
+                     WHERE q.courseid = :courseid AND (rv.reviewerid = :uid1 OR rv.submitterid = :uid2)";
+            $rs = $DB->get_recordset_sql($sql, [
+                'courseid' => $courseid,
+                'uid1' => $userid,
+                'uid2' => $userid,
             ]);
-            $DB->delete_records('local_hlai_quizgen_reviews', [
-                'submitterid' => $userid,
-            ]);
+            foreach ($rs as $review) {
+                $DB->delete_records('local_hlai_quizgen_revisions', ['reviewid' => $review->id]);
+                $DB->delete_records('local_hlai_quizgen_reviews', ['id' => $review->id]);
+            }
+            $rs->close();
 
-            // Delete wizard state.
+            // Delete wizard state scoped to this course.
             $DB->delete_records('local_hlai_quizgen_wizstate', [
                 'userid' => $userid,
+                'courseid' => $courseid,
             ]);
 
-            // Delete rate limit log.
-            $DB->delete_records('local_hlai_quizgen_ratelog', [
-                'userid' => $userid,
-            ]);
-
-            // Delete templates.
+            // Delete templates scoped to this course.
             $DB->delete_records('local_hlai_quizgen_templates', [
+                'userid' => $userid,
+                'courseid' => $courseid,
+            ]);
+
+            // Delete rate limit log (global per user).
+            $DB->delete_records('local_hlai_quizgen_ratelog', [
                 'userid' => $userid,
             ]);
         }
@@ -564,48 +741,111 @@ class provider implements
         $userids = $userlist->get_userids();
 
         foreach ($userids as $userid) {
-            // Delete user's requests.
-            $requests = $DB->get_records('local_hlai_quizgen_requests', [
+            // Delete user's requests and all child records.
+            $rs = $DB->get_recordset('local_hlai_quizgen_requests', [
                 'courseid' => $courseid,
                 'userid' => $userid,
             ]);
-
-            foreach ($requests as $request) {
+            $requestids = [];
+            foreach ($rs as $request) {
+                $requestids[] = $request->id;
                 self::delete_request_data($request->id);
             }
+            $rs->close();
 
-            // Delete user settings.
+            // Delete user's questions and their child records in this course using batch operations.
+            $questionids = $DB->get_fieldset_sql(
+                "SELECT id FROM {local_hlai_quizgen_questions} WHERE userid = :userid AND courseid = :courseid",
+                ['userid' => $userid, 'courseid' => $courseid]
+            );
+            self::delete_questions_cascade($questionids);
+            $DB->delete_records('local_hlai_quizgen_questions', [
+                'userid' => $userid,
+                'courseid' => $courseid,
+            ]);
+
+            // Delete user settings scoped to this course.
             $DB->delete_records('local_hlai_quizgen_settings', [
                 'userid' => $userid,
                 'courseid' => $courseid,
             ]);
 
-            // Delete user logs.
-            $DB->delete_records('local_hlai_quizgen_logs', ['userid' => $userid]);
+            // Delete user logs linked to their requests in this course.
+            if (!empty($requestids)) {
+                list($insql, $inparams) = $DB->get_in_or_equal($requestids, SQL_PARAMS_NAMED, 'req');
+                $inparams['userid'] = $userid;
+                $DB->delete_records_select(
+                    'local_hlai_quizgen_logs',
+                    "userid = :userid AND requestid {$insql}",
+                    $inparams
+                );
+            }
 
-            // Delete reviews where user is the reviewer or the submitter.
-            $DB->delete_records('local_hlai_quizgen_reviews', [
-                'reviewerid' => $userid,
+            // Delete reviews where user is reviewer/submitter, scoped to this course.
+            $sql = "SELECT rv.id
+                      FROM {local_hlai_quizgen_reviews} rv
+                      JOIN {local_hlai_quizgen_questions} q ON q.id = rv.questionid
+                     WHERE q.courseid = :courseid AND (rv.reviewerid = :uid1 OR rv.submitterid = :uid2)";
+            $rs = $DB->get_recordset_sql($sql, [
+                'courseid' => $courseid,
+                'uid1' => $userid,
+                'uid2' => $userid,
             ]);
-            $DB->delete_records('local_hlai_quizgen_reviews', [
-                'submitterid' => $userid,
-            ]);
+            foreach ($rs as $review) {
+                $DB->delete_records('local_hlai_quizgen_revisions', ['reviewid' => $review->id]);
+                $DB->delete_records('local_hlai_quizgen_reviews', ['id' => $review->id]);
+            }
+            $rs->close();
 
-            // Delete wizard state.
+            // Delete wizard state scoped to this course.
             $DB->delete_records('local_hlai_quizgen_wizstate', [
                 'userid' => $userid,
+                'courseid' => $courseid,
             ]);
 
-            // Delete rate limit log.
+            // Delete templates scoped to this course.
+            $DB->delete_records('local_hlai_quizgen_templates', [
+                'userid' => $userid,
+                'courseid' => $courseid,
+            ]);
+
+            // Delete rate limit log (global per user).
             $DB->delete_records('local_hlai_quizgen_ratelog', [
                 'userid' => $userid,
             ]);
-
-            // Delete templates.
-            $DB->delete_records('local_hlai_quizgen_templates', [
-                'userid' => $userid,
-            ]);
         }
+    }
+
+    /**
+     * Batch-delete child records (answers, reviews, revisions) for given question IDs.
+     *
+     * Avoids N+1 queries by using bulk operations instead of per-question loops.
+     *
+     * @param array $questionids Array of question IDs
+     * @return void
+     */
+    private static function delete_questions_cascade(array $questionids): void {
+        global $DB;
+
+        if (empty($questionids)) {
+            return;
+        }
+
+        [$insql, $inparams] = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'qid');
+
+        // Batch delete answers for all questions.
+        $DB->delete_records_select('local_hlai_quizgen_answers', "questionid {$insql}", $inparams);
+
+        // Batch get review IDs, then cascade-delete revisions, then reviews.
+        $reviewids = $DB->get_fieldset_sql(
+            "SELECT id FROM {local_hlai_quizgen_reviews} WHERE questionid {$insql}",
+            $inparams
+        );
+        if (!empty($reviewids)) {
+            [$rinsql, $rinparams] = $DB->get_in_or_equal($reviewids, SQL_PARAMS_NAMED, 'rid');
+            $DB->delete_records_select('local_hlai_quizgen_revisions', "reviewid {$rinsql}", $rinparams);
+        }
+        $DB->delete_records_select('local_hlai_quizgen_reviews', "questionid {$insql}", $inparams);
     }
 
     /**
@@ -617,20 +857,14 @@ class provider implements
     private static function delete_request_data(int $requestid): void {
         global $DB;
 
-        // Get questions to cascade-delete child records.
-        $questions = $DB->get_records('local_hlai_quizgen_questions', ['requestid' => $requestid]);
-
-        foreach ($questions as $question) {
-            // Delete all child records linked to this question.
-            $DB->delete_records('local_hlai_quizgen_answers', ['questionid' => $question->id]);
-
-            // Delete review records and their children.
-            $reviews = $DB->get_records('local_hlai_quizgen_reviews', ['questionid' => $question->id]);
-            foreach ($reviews as $review) {
-                $DB->delete_records('local_hlai_quizgen_revisions', ['reviewid' => $review->id]);
-            }
-            $DB->delete_records('local_hlai_quizgen_reviews', ['questionid' => $question->id]);
-        }
+        // Batch cascade-delete child records for all questions in this request.
+        $questionids = $DB->get_fieldset_select(
+            'local_hlai_quizgen_questions',
+            'id',
+            'requestid = :requestid',
+            ['requestid' => $requestid]
+        );
+        self::delete_questions_cascade($questionids);
 
         // Delete request-level child records.
         $DB->delete_records('local_hlai_quizgen_questions', ['requestid' => $requestid]);

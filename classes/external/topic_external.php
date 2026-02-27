@@ -92,6 +92,7 @@ class topic_external extends external_api {
         // Validate context.
         $context = \context_course::instance($request->courseid);
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:generatequestions', $context);
 
         // Validate ownership.
         if ($request->userid != $USER->id) {
@@ -164,6 +165,7 @@ class topic_external extends external_api {
 
         $context = \context_course::instance($request->courseid);
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:generatequestions', $context);
 
         // Validate ownership.
         if ($request->userid != $USER->id) {
@@ -245,6 +247,7 @@ class topic_external extends external_api {
         // Validate context.
         $context = \context_course::instance($request->courseid);
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:generatequestions', $context);
 
         // Validate ownership.
         if ($request->userid != $USER->id) {

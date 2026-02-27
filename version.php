@@ -30,6 +30,7 @@ $plugin->requires  = 2022112809;        // Moodle 4.1.9+.
 $plugin->supported = [401, 500];        // Moodle 4.1.9+ to 5.0.x.
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->release   = '1.6.7';
-
-// Note: Requires a Human Logic API key for functionality. No external plugin dependencies.
-// Configure your API key in: Site Administration > Plugins > Local plugins > AI Quiz Generator.
+$plugin->dependencies = [
+    // No peer plugin dependencies. Uses core question bank and mod_quiz APIs.
+];
+   

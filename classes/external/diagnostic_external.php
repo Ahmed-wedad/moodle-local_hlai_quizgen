@@ -118,11 +118,12 @@ class diagnostic_external extends external_api {
                 JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
                 WHERE qc.contextid = ?";
 
-        $questions = $DB->get_records_sql($sql, [$coursecontext->id]);
-        $result['questions_checked'] = count($questions);
+        $rs = $DB->get_recordset_sql($sql, [$coursecontext->id]);
+        $questioncount = 0;
 
         // Try to fix each question using direct SQL if needed.
-        foreach ($questions as $q) {
+        foreach ($rs as $q) {
+            $questioncount++;
             try {
                 if ($hascategory) {
                     // Column exists, use set_field.
@@ -157,6 +158,8 @@ class diagnostic_external extends external_api {
                 );
             }
         }
+        $rs->close();
+        $result['questions_checked'] = $questioncount;
 
         // Verify by reading back a sample.
         $sampledata = [];
@@ -257,7 +260,7 @@ class diagnostic_external extends external_api {
                 JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
                 WHERE qc.contextid = ?";
 
-        $questions = $DB->get_records_sql($sql, [$coursecontext->id]);
+        $rs = $DB->get_recordset_sql($sql, [$coursecontext->id]);
 
         $bytype = [];
         $missingtypedata = [];
@@ -267,7 +270,7 @@ class diagnostic_external extends external_api {
         // Batch-load type-specific data to avoid N+1 queries.
         // Group question IDs by type for efficient IN-clause lookups.
         $idsbytype = [];
-        foreach ($questions as $q) {
+        foreach ($rs as $q) {
             if (!isset($bytype[$q->qtype])) {
                 $bytype[$q->qtype] = 0;
             }
@@ -283,6 +286,7 @@ class diagnostic_external extends external_api {
 
             $idsbytype[$q->qtype][$q->id] = $q;
         }
+        $rs->close();
 
         // Pre-fetch existing type data with bulk queries (one query per type instead of one per question).
         $typedataexists = [];
@@ -451,10 +455,11 @@ class diagnostic_external extends external_api {
                     JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
                     WHERE qc.contextid = ?";
 
-            $questions = $DB->get_records_sql($sql, [$coursecontext->id]);
-            $found = count($questions);
+            $rs = $DB->get_recordset_sql($sql, [$coursecontext->id]);
+            $found = 0;
 
-            foreach ($questions as $q) {
+            foreach ($rs as $q) {
+                $found++;
                 // Check if category needs repair.
                 if (empty($q->current_category) || $q->current_category != $q->questioncategoryid) {
                     try {
@@ -469,6 +474,7 @@ class diagnostic_external extends external_api {
                     }
                 }
             }
+            $rs->close();
 
             $message = get_string(
                 'ajax_repair_result',

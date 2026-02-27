@@ -94,6 +94,7 @@ class wizard_external extends external_api {
         // Validate context using the course from the request.
         $context = \context_course::instance($request->courseid);
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:generatequestions', $context);
 
         // Verify the user owns this request.
         if ($request->userid != $USER->id) {
@@ -252,6 +253,7 @@ class wizard_external extends external_api {
         // Validate course context.
         $context = \context_course::instance($courseid);
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:generatequestions', $context);
 
         // Decode and re-encode state to ensure valid JSON is stored.
         $statedata = json_decode($state, true);
@@ -335,6 +337,7 @@ class wizard_external extends external_api {
         // Validate course context.
         $context = \context_course::instance($courseid);
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:generatequestions', $context);
 
         // Look up state for this user+course.
         $state = $DB->get_record('local_hlai_quizgen_wizstate', [
@@ -406,6 +409,7 @@ class wizard_external extends external_api {
         // Validate course context.
         $context = \context_course::instance($courseid);
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:generatequestions', $context);
 
         // Delete wizard state for this user+course.
         $DB->delete_records('local_hlai_quizgen_wizstate', [

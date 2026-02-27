@@ -93,6 +93,7 @@ class template_external extends external_api {
         // Validate context.
         $context = \context_system::instance();
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:generatequestions', $context);
 
         // Validate JSON configuration.
         $configdata = json_decode($config, true);
@@ -153,6 +154,7 @@ class template_external extends external_api {
         // Validate context.
         $context = \context_system::instance();
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:generatequestions', $context);
 
         // Get user's saved templates.
         $templates = $DB->get_records_sql(
@@ -228,6 +230,7 @@ class template_external extends external_api {
         // Validate context.
         $context = \context_system::instance();
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:generatequestions', $context);
 
         // Validate user owns the template.
         $template = $DB->get_record('local_hlai_quizgen_settings', ['id' => $templateid]);

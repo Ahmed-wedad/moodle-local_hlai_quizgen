@@ -182,20 +182,9 @@ class content_extractor {
      * @return string Extracted text content
      */
     private static function extract_pdf_pdftotext(string $filepath): string {
-        $pdftotext = '';
-        $pathdirs = explode(PATH_SEPARATOR, getenv('PATH') ?: '');
-        foreach ($pathdirs as $dir) {
-            $candidate = $dir . DIRECTORY_SEPARATOR . 'pdftotext';
-            $candidateexe = $dir . DIRECTORY_SEPARATOR . 'pdftotext.exe';
-            if (is_executable($candidate)) {
-                $pdftotext = $candidate;
-                break;
-            } else if (is_executable($candidateexe)) {
-                $pdftotext = $candidateexe;
-                break;
-            }
-        }
-        if (empty($pdftotext)) {
+        // Use admin-configured path instead of scanning PATH for security.
+        $pdftotext = get_config('local_hlai_quizgen', 'pathtopdftotext');
+        if (empty($pdftotext) || !is_executable($pdftotext)) {
             return '';
         }
 
@@ -231,19 +220,9 @@ class content_extractor {
      * @return string Extracted text content
      */
     private static function extract_pdf_ghostscript(string $filepath): string {
-        $gs = '';
-        $pathdirs = explode(PATH_SEPARATOR, getenv('PATH') ?: '');
-        $gsnames = ['gs', 'gs.exe', 'gswin64c.exe', 'gswin32c.exe'];
-        foreach ($pathdirs as $dir) {
-            foreach ($gsnames as $gsname) {
-                $candidate = $dir . DIRECTORY_SEPARATOR . $gsname;
-                if (is_executable($candidate)) {
-                    $gs = $candidate;
-                    break 2;
-                }
-            }
-        }
-        if (empty($gs)) {
+        // Use admin-configured path instead of scanning PATH for security.
+        $gs = get_config('local_hlai_quizgen', 'pathtogs');
+        if (empty($gs) || !is_executable($gs)) {
             return '';
         }
 
@@ -586,9 +565,7 @@ class content_extractor {
         }
 
         try {
-            // Use Moodle's curl wrapper.
-            require_once(dirname(__DIR__, 3) . '/lib/filelib.php');
-
+            // Use Moodle's curl wrapper (loaded by core bootstrap via lib/filelib.php).
             $curl = new \curl();
             $curl->setopt([
                 'CURLOPT_TIMEOUT' => 30,
@@ -997,16 +974,24 @@ class content_extractor {
 
         $allcontent = '';
 
+        // Bulk-load all course_modules with their module names to avoid N+1 queries.
+        [$insql, $inparams] = $DB->get_in_or_equal($cmids, SQL_PARAMS_NAMED);
+        $cms = $DB->get_records_sql(
+            "SELECT cm.*, m.name AS modulename
+               FROM {course_modules} cm
+               JOIN {modules} m ON m.id = cm.module
+              WHERE cm.id {$insql}",
+            $inparams
+        );
+
         foreach ($cmids as $cmid) {
             try {
-                // Get module type.
-                $cm = $DB->get_record('course_modules', ['id' => $cmid], '*', IGNORE_MISSING);
-                if (!$cm) {
+                if (!isset($cms[$cmid])) {
                     continue;
                 }
 
-                $module = $DB->get_record('modules', ['id' => $cm->module], '*', MUST_EXIST);
-                $moduletype = $module->name;
+                $cm = $cms[$cmid];
+                $moduletype = $cm->modulename;
 
                 // Extract content.
                 $result = self::extract_from_activity($cmid, $moduletype, $courseid);
@@ -1211,11 +1196,28 @@ class content_extractor {
         // Get forum discussions and posts (limit to avoid too much content).
         $discussions = $DB->get_records('forum_discussions', ['forum' => $forum->id], 'timemodified DESC', '*', 0, 10);
 
+        // Bulk-load posts for all discussions to avoid N+1 queries.
+        $postsbydiscussion = [];
+        if (!empty($discussions)) {
+            $discussionids = array_keys($discussions);
+            [$insql, $inparams] = $DB->get_in_or_equal($discussionids, SQL_PARAMS_NAMED);
+            $allposts = $DB->get_records_sql(
+                "SELECT fp.*
+                   FROM {forum_posts} fp
+                  WHERE fp.discussion {$insql}
+               ORDER BY fp.discussion, fp.created ASC",
+                $inparams
+            );
+            foreach ($allposts as $post) {
+                $postsbydiscussion[$post->discussion][] = $post;
+            }
+        }
+
         foreach ($discussions as $discussion) {
             $text .= "\n\n## Discussion: " . $discussion->name . "\n\n";
 
-            // Get first post of each discussion.
-            $posts = $DB->get_records('forum_posts', ['discussion' => $discussion->id], 'created ASC', '*', 0, 5);
+            // Get first 5 posts of each discussion from preloaded data.
+            $posts = array_slice($postsbydiscussion[$discussion->id] ?? [], 0, 5);
             foreach ($posts as $post) {
                 if (!empty($post->message)) {
                     $text .= self::html_to_structured_text($post->message) . "\n";

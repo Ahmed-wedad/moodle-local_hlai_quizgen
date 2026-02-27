@@ -1026,25 +1026,38 @@ function xmldb_local_hlai_quizgen_upgrade($oldversion) {
 
         $contexts = $DB->get_records_sql($sql);
 
-        foreach ($contexts as $context) {
-            // Get all top-level categories for this context.
-            $categories = $DB->get_records(
+        // Bulk-load all top-level categories for affected contexts to avoid N+1.
+        $contextids = array_map(function ($c) {
+            return $c->contextid;
+        }, $contexts);
+
+        if (!empty($contextids)) {
+            [$insql, $inparams] = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED);
+            $allcategories = $DB->get_records_select(
                 'question_categories',
-                ['contextid' => $context->contextid, 'parent' => 0],
-                'id ASC'
+                "parent = 0 AND contextid {$insql}",
+                $inparams,
+                'contextid, id ASC'
             );
 
-            // Keep the first one as the real top category, fix the rest.
-            $first = true;
-            $topcategoryid = null;
+            // Group by contextid.
+            $grouped = [];
+            foreach ($allcategories as $cat) {
+                $grouped[$cat->contextid][] = $cat;
+            }
 
-            foreach ($categories as $category) {
-                if ($first) {
-                    $topcategoryid = $category->id;
-                    $first = false;
-                } else {
-                    // Move orphan category to be a child of the real top category.
-                    $DB->set_field('question_categories', 'parent', $topcategoryid, ['id' => $category->id]);
+            foreach ($grouped as $categories) {
+                $first = true;
+                $topcategoryid = null;
+
+                foreach ($categories as $category) {
+                    if ($first) {
+                        $topcategoryid = $category->id;
+                        $first = false;
+                    } else {
+                        // Move orphan category to be a child of the real top category.
+                        $DB->set_field('question_categories', 'parent', $topcategoryid, ['id' => $category->id]);
+                    }
                 }
             }
         }

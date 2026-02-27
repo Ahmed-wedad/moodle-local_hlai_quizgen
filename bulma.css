@@ -1,5 +1,14 @@
-/* Bulma CSS - scoped under .hlai-quizgen-wrapper to prevent global style pollution */
-/*! bulma.io v0.9.4 | MIT License | github.com/jgthms/bulma */
+/**
+ * Bulma CSS Framework v0.9.4 (scoped)
+ *
+ * Third-party library - see thirdpartylibs.xml for license details.
+ * Original: https://bulma.io/ | MIT License | github.com/jgthms/bulma
+ * Scoped under .hlai-quizgen-wrapper to prevent global style pollution.
+ *
+ * @package    local_hlai_quizgen
+ * @copyright  Jeremy Thomas (Bulma author)
+ * @license    MIT https://opensource.org/licenses/MIT
+ */
 
 /* Bulma Utilities */
 .hlai-quizgen-wrapper .button,

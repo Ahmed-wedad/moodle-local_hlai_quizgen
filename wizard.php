@@ -28,11 +28,6 @@ require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once(__DIR__ . '/lib.php');
 
-// Load Composer autoloader for document parsing libraries.
-if (file_exists(__DIR__ . '/vendor/autoload.php')) {
-    require_once(__DIR__ . '/vendor/autoload.php');
-}
-
 // Use wizard helper class for better code organization.
 use local_hlai_quizgen\wizard_helper;
 use local_hlai_quizgen\debug_logger;

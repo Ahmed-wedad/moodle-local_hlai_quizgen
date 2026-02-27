@@ -352,7 +352,7 @@ class api {
             $params['userid'] = $USER->id;
         }
 
-        return $DB->get_records('local_hlai_quizgen_requests', $params, 'timecreated DESC');
+        return $DB->get_records('local_hlai_quizgen_requests', $params, 'timecreated DESC', '*', 0, 500);
     }
 
     /**
@@ -482,6 +482,33 @@ class api {
         $pluginquestions = $DB->get_records('local_hlai_quizgen_questions', ['requestid' => $requestid]);
         $result['plugin_question_count'] = count($pluginquestions);
 
+        // Bulk-load Moodle question data and bank entries to avoid N+1 queries.
+        $moodleqids = array_filter(array_map(function ($pq) {
+            return !empty($pq->moodle_questionid) ? $pq->moodle_questionid : null;
+        }, $pluginquestions));
+
+        $moodlequestions = [];
+        $bankentries = [];
+        if (!empty($moodleqids)) {
+            [$insql, $inparams] = $DB->get_in_or_equal($moodleqids, SQL_PARAMS_NAMED);
+            $moodlequestions = $DB->get_records_select('question', "id {$insql}", $inparams);
+
+            $berows = $DB->get_records_sql(
+                "SELECT qv.questionid, qbe.*, qv.status AS version_status, qv.version
+                   FROM {question_bank_entries} qbe
+                   JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
+                  WHERE qv.questionid {$insql}
+               ORDER BY qv.questionid, qv.version DESC",
+                $inparams
+            );
+            // Keep only the latest version per questionid.
+            foreach ($berows as $row) {
+                if (!isset($bankentries[$row->questionid])) {
+                    $bankentries[$row->questionid] = $row;
+                }
+            }
+        }
+
         foreach ($pluginquestions as $pq) {
             $qinfo = [
                 'id' => $pq->id,
@@ -491,25 +518,17 @@ class api {
                 'timedeployed' => $pq->timedeployed ? date('Y-m-d H:i:s', $pq->timedeployed) : null,
             ];
 
-            // If deployed, check Moodle tables.
+            // If deployed, check Moodle tables from preloaded data.
             if (!empty($pq->moodle_questionid)) {
-                // Check question table.
-                $mq = $DB->get_record('question', ['id' => $pq->moodle_questionid]);
+                $mq = $moodlequestions[$pq->moodle_questionid] ?? null;
                 if ($mq) {
                     $qinfo['moodle_question_exists'] = true;
                     $qinfo['moodle_category_id'] = $mq->category;
                     $qinfo['moodle_hidden'] = $mq->hidden;
                     $qinfo['moodle_qtype'] = $mq->qtype;
 
-                    // Check question_bank_entries.
-                    $qbe = $DB->get_record_sql(
-                        "SELECT qbe.*, qv.status as version_status, qv.version
-                         FROM {question_bank_entries} qbe
-                         JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
-                         WHERE qv.questionid = ?
-                         ORDER BY qv.version DESC",
-                        [$pq->moodle_questionid]
-                    );
+                    // Check question_bank_entries from preloaded data.
+                    $qbe = $bankentries[$pq->moodle_questionid] ?? null;
                     if ($qbe) {
                         $qinfo['bank_entry_exists'] = true;
                         $qinfo['bank_entry_category_id'] = $qbe->questioncategoryid;

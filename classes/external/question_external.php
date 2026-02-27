@@ -110,6 +110,7 @@ class question_external extends external_api {
         $request = $DB->get_record('local_hlai_quizgen_requests', ['id' => $question->requestid], '*', MUST_EXIST);
         $context = \context_course::instance($request->courseid);
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:editquestions', $context);
 
         // Validate the field is allowed.
         $allowedfields = ['questiontext', 'difficulty', 'blooms_level', 'generalfeedback'];
@@ -200,6 +201,7 @@ class question_external extends external_api {
         $request = $DB->get_record('local_hlai_quizgen_requests', ['id' => $question->requestid], '*', MUST_EXIST);
         $context = \context_course::instance($request->courseid);
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:editquestions', $context);
 
         // Validate the field is allowed.
         $allowedfields = ['answer', 'feedback', 'fraction'];
@@ -285,6 +287,7 @@ class question_external extends external_api {
         $request = $DB->get_record('local_hlai_quizgen_requests', ['id' => $question->requestid], '*', MUST_EXIST);
         $context = \context_course::instance($request->courseid);
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:editquestions', $context);
 
         // Decode the JSON order array.
         $order = json_decode($order, true);
@@ -365,6 +368,7 @@ class question_external extends external_api {
         $request = $DB->get_record('local_hlai_quizgen_requests', ['id' => $question->requestid], '*', MUST_EXIST);
         $context = \context_course::instance($request->courseid);
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:approvequestions', $context);
 
         // Update the question status.
         $DB->set_field('local_hlai_quizgen_questions', 'status', 'approved', ['id' => $questionid]);
@@ -452,6 +456,7 @@ class question_external extends external_api {
         $request = $DB->get_record('local_hlai_quizgen_requests', ['id' => $question->requestid], '*', MUST_EXIST);
         $context = \context_course::instance($request->courseid);
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:approvequestions', $context);
 
         // Update the question status.
         $DB->set_field('local_hlai_quizgen_questions', 'status', 'rejected', ['id' => $questionid]);
@@ -537,6 +542,7 @@ class question_external extends external_api {
         $request = $DB->get_record('local_hlai_quizgen_requests', ['id' => $firstquestion->requestid], '*', MUST_EXIST);
         $context = \context_course::instance($request->courseid);
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:approvequestions', $context);
 
         // Batch-fetch all questions to avoid N+1 queries.
         $intids = array_map('intval', $questionids);
@@ -557,15 +563,11 @@ class question_external extends external_api {
                 $approved++;
             }
         }
-        // Batch update using a single query with IN clause.
+        // Batch update using DML set_field_select with IN clause.
         if (!empty($ownedids)) {
             [$insql, $inparams] = $DB->get_in_or_equal($ownedids, SQL_PARAMS_NAMED);
-            $inparams['newstatus'] = 'approved';
-            $inparams['timemod'] = $now;
-            $DB->execute(
-                "UPDATE {local_hlai_quizgen_questions} SET status = :newstatus, timemodified = :timemod WHERE id {$insql}",
-                $inparams
-            );
+            $DB->set_field_select('local_hlai_quizgen_questions', 'status', 'approved', "id {$insql}", $inparams);
+            $DB->set_field_select('local_hlai_quizgen_questions', 'timemodified', $now, "id {$insql}", $inparams);
         }
 
         return [
@@ -635,6 +637,7 @@ class question_external extends external_api {
         $request = $DB->get_record('local_hlai_quizgen_requests', ['id' => $firstquestion->requestid], '*', MUST_EXIST);
         $context = \context_course::instance($request->courseid);
         self::validate_context($context);
+        require_capability('local/hlai_quizgen:approvequestions', $context);
 
         // Batch-fetch all questions to avoid N+1 queries.
         $intids = array_map('intval', $questionids);
@@ -655,15 +658,11 @@ class question_external extends external_api {
                 $rejected++;
             }
         }
-        // Batch update using a single query with IN clause.
+        // Batch update using DML set_field_select with IN clause.
         if (!empty($ownedids)) {
             [$insql, $inparams] = $DB->get_in_or_equal($ownedids, SQL_PARAMS_NAMED);
-            $inparams['newstatus'] = 'rejected';
-            $inparams['timemod'] = $now;
-            $DB->execute(
-                "UPDATE {local_hlai_quizgen_questions} SET status = :newstatus, timemodified = :timemod WHERE id {$insql}",
-                $inparams
-            );
+            $DB->set_field_select('local_hlai_quizgen_questions', 'status', 'rejected', "id {$insql}", $inparams);
+            $DB->set_field_select('local_hlai_quizgen_questions', 'timemodified', $now, "id {$insql}", $inparams);
         }
 
         return [
