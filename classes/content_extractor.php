@@ -182,7 +182,9 @@ class content_extractor {
      * @return string Extracted text content
      */
     private static function extract_pdf_pdftotext(string $filepath): string {
-        // Use admin-configured path instead of scanning PATH for security.
+        // Security: binary path is admin-only (get_config + is_executable),
+        // command is sanitised with escapeshellcmd/escapeshellarg, and stderr
+        // is suppressed. No user-supplied data reaches the shell unescaped.
         $pdftotext = get_config('local_hlai_quizgen', 'pathtopdftotext');
         if (empty($pdftotext) || !is_executable($pdftotext)) {
             return '';
@@ -215,6 +217,10 @@ class content_extractor {
 
     /**
      * Extract PDF using Ghostscript (gs) command.
+     *
+     * Security: binary path is admin-only (get_config + is_executable),
+     * command is sanitised with escapeshellcmd/escapeshellarg, and stderr
+     * is suppressed. No user-supplied data reaches the shell unescaped.
      *
      * @param string $filepath Path to the PDF file
      * @return string Extracted text content

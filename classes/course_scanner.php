@@ -75,8 +75,8 @@ class course_scanner {
         ];
 
         // 2. Section Summaries (filter out administrative sections).
-        $sections = $DB->get_records('course_sections', ['course' => $courseid], 'section ASC');
-        foreach ($sections as $section) {
+        $rs = $DB->get_recordset('course_sections', ['course' => $courseid], 'section ASC');
+        foreach ($rs as $section) {
             // Skip administrative sections (assignment, assessment, certificate).
             $sectionname = strtolower(trim($section->name ?? ''));
             if (in_array($sectionname, self::EXCLUDED_SECTION_NAMES)) {
@@ -100,6 +100,7 @@ class course_scanner {
                 break;
             }
         }
+        $rs->close();
 
         // 3. Scan all resources (pages, books, etc.) - the actual learning content.
         $resourcescan = self::scan_all_resources($courseid);

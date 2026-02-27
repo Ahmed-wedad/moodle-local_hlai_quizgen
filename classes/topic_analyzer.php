@@ -320,9 +320,9 @@ class topic_analyzer {
             }
 
             // CLEAN UP: Remove module type prefixes from titles.
-            // "SCORM: Control Safety Hazards" → "Control Safety Hazards".
-            // "SECTION: Valves: Introduction" → "Valves: Introduction".
-            // "COURSE: Valves" → "Valves".
+            // "SCORM: Control Safety Hazards" -> "Control Safety Hazards".
+            // "SECTION: Valves: Introduction" -> "Valves: Introduction".
+            // "COURSE: Valves" -> "Valves".
             $title = self::clean_topic_title($title);
             $topic['title'] = $title;
 
@@ -507,10 +507,10 @@ class topic_analyzer {
      * Clean up topic title by removing module type prefixes.
      *
      * Examples:
-     * - "SCORM: Control Safety Hazards: Working in Confined Spaces" → "Control Safety Hazards: Working in Confined Spaces"
-     * - "SECTION: Valves: Introduction to Valves" → "Valves: Introduction to Valves"
-     * - "COURSE: Valves" → "Valves"
-     * - "LESSON: Introduction to Python" → "Introduction to Python"
+     * - "SCORM: Control Safety Hazards: Working in Confined Spaces" -> "Control Safety Hazards: Working in Confined Spaces"
+     * - "SECTION: Valves: Introduction to Valves" -> "Valves: Introduction to Valves"
+     * - "COURSE: Valves" -> "Valves"
+     * - "LESSON: Introduction to Python" -> "Introduction to Python"
      *
      * @param string $title Original topic title
      * @return string Cleaned topic title

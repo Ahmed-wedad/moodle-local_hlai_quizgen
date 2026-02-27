@@ -311,7 +311,8 @@ class debug_logger {
         // Add context if not empty.
         if (!empty($context)) {
             $contextstr = json_encode($context, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-            $logentry .= "    Context: " . str_replace("\n", "\n    ", $contextstr) . "\n";
+            $logentry .= '    ' . get_string('log_context_label', 'local_hlai_quizgen') . ' '
+                . str_replace("\n", "\n    ", $contextstr) . "\n";
         }
 
         $logentry .= str_repeat('-', 80) . "\n";

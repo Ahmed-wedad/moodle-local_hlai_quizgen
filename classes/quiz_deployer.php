@@ -293,15 +293,15 @@ class quiz_deployer {
              FROM {question} q
              JOIN {question_versions} qv ON qv.questionid = q.id
              JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
-             WHERE qbe.questioncategoryid = ?
-             AND q.questiontext = ?
-             AND q.qtype = ?
+             WHERE qbe.questioncategoryid = :categoryid
+             AND q.questiontext = :questiontext
+             AND q.qtype = :qtype
              ORDER BY q.id DESC
              LIMIT 1",
             [
-                $categoryid,
-                $questiontext,
-                ($genquestion->questiontype === 'scenario') ? 'essay' : $genquestion->questiontype,
+                'categoryid' => $categoryid,
+                'questiontext' => $questiontext,
+                'qtype' => ($genquestion->questiontype === 'scenario') ? 'essay' : $genquestion->questiontype,
             ]
         );
 
@@ -427,13 +427,13 @@ class quiz_deployer {
         if (self::is_moodle_5_or_later()) {
             $quizmodulecontext = \context_module::instance($cmid);
             debugging(
-                "create_quiz: Moodle 5.x detected — using module context ID=" .
+                "create_quiz: Moodle 5.x detected - using module context ID=" .
                 $quizmodulecontext->id,
                 DEBUG_DEVELOPER
             );
             $moodlequestionids = self::deploy_to_question_bank($questionids, $courseid, $categoryname, $quizmodulecontext);
         } else {
-            debugging("create_quiz: Moodle 4.x detected — using course context", DEBUG_DEVELOPER);
+            debugging("create_quiz: Moodle 4.x detected - using course context", DEBUG_DEVELOPER);
             $moodlequestionids = self::deploy_to_question_bank($questionids, $courseid, $categoryname);
         }
 
@@ -604,10 +604,10 @@ class quiz_deployer {
             // Find existing default category under this context's top.
             $defaultcategory = $DB->get_record_sql(
                 "SELECT * FROM {question_categories}
-                 WHERE contextid = ? AND parent = ? AND id != ?
+                 WHERE contextid = :contextid AND parent = :parentid AND id != :excludeid
                  ORDER BY sortorder ASC, id ASC
                  LIMIT 1",
-                [$context->id, $topcategory->id, $topcategory->id]
+                ['contextid' => $context->id, 'parentid' => $topcategory->id, 'excludeid' => $topcategory->id]
             );
 
             if (!$defaultcategory) {
@@ -619,8 +619,8 @@ class quiz_deployer {
                          FROM {context} ctx
                          JOIN {course_modules} cm ON cm.id = ctx.instanceid
                          JOIN {modules} m ON m.id = cm.module
-                         WHERE ctx.id = ? AND ctx.contextlevel = ?",
-                        [$context->id, CONTEXT_MODULE]
+                         WHERE ctx.id = :ctxid AND ctx.contextlevel = :ctxlevel",
+                        ['ctxid' => $context->id, 'ctxlevel' => CONTEXT_MODULE]
                     );
                     if ($cm) {
                         $modname = $DB->get_field($cm->modname, 'name', ['id' => $cm->instance]);
@@ -886,12 +886,12 @@ class quiz_deployer {
             "SELECT qbe.questioncategoryid, qv.status as version_status
              FROM {question_bank_entries} qbe
              JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
-             WHERE qv.questionid = ?",
-            [$questionid]
+             WHERE qv.questionid = :questionid",
+            ['questionid' => $questionid]
         );
 
         debugging(
-            "deploy: Question $questionid created — category=$categoryid, " .
+            "deploy: Question $questionid created - category=$categoryid, " .
             "bank_entry_cat=" . ($verifyqbe->questioncategoryid ?? 'NULL') .
             ", version_status=" . ($verifyqbe->version_status ?? 'NULL'),
             DEBUG_DEVELOPER
@@ -1022,8 +1022,8 @@ class quiz_deployer {
         $DB->insert_record('qtype_multichoice_options', $options);
 
         // Add answers.
-        $answers = $DB->get_records('local_hlai_quizgen_answers', ['questionid' => $genquestion->id], 'sortorder ASC');
-        foreach ($answers as $answer) {
+        $rs = $DB->get_recordset('local_hlai_quizgen_answers', ['questionid' => $genquestion->id], 'sortorder ASC');
+        foreach ($rs as $answer) {
             $answerrecord = new \stdClass();
             $answerrecord->question = $questionid;
             $answerrecord->answer = $answer->answer;
@@ -1034,6 +1034,7 @@ class quiz_deployer {
 
             $DB->insert_record('question_answers', $answerrecord);
         }
+        $rs->close();
     }
 
     /**
@@ -1047,12 +1048,12 @@ class quiz_deployer {
         global $DB;
 
         // Get answers and create answer records.
-        $answers = $DB->get_records('local_hlai_quizgen_answers', ['questionid' => $genquestion->id], 'sortorder ASC');
+        $rs = $DB->get_recordset('local_hlai_quizgen_answers', ['questionid' => $genquestion->id], 'sortorder ASC');
 
         $trueid = 0;
         $falseid = 0;
 
-        foreach ($answers as $answer) {
+        foreach ($rs as $answer) {
             $answerrecord = new \stdClass();
             $answerrecord->question = $questionid;
             $answerrecord->answer = $answer->answer; // Contains true or false value.
@@ -1070,6 +1071,7 @@ class quiz_deployer {
                 $falseid = $answerid;
             }
         }
+        $rs->close();
 
         // Create the truefalse question record.
         $tfrecord = new \stdClass();
@@ -1099,8 +1101,8 @@ class quiz_deployer {
         $DB->insert_record('qtype_shortanswer_options', $options);
 
         // Add answers.
-        $answers = $DB->get_records('local_hlai_quizgen_answers', ['questionid' => $genquestion->id], 'sortorder ASC');
-        foreach ($answers as $answer) {
+        $rs = $DB->get_recordset('local_hlai_quizgen_answers', ['questionid' => $genquestion->id], 'sortorder ASC');
+        foreach ($rs as $answer) {
             $answerrecord = new \stdClass();
             $answerrecord->question = $questionid;
             $answerrecord->answer = $answer->answer;
@@ -1111,6 +1113,7 @@ class quiz_deployer {
 
             $DB->insert_record('question_answers', $answerrecord);
         }
+        $rs->close();
     }
 
     /**
@@ -1240,15 +1243,15 @@ class quiz_deployer {
 
         // Get max page number.
         $maxpage = $DB->get_field_sql(
-            "SELECT MAX(page) FROM {quiz_slots} WHERE quizid = ?",
-            [$quizid]
+            "SELECT MAX(page) FROM {quiz_slots} WHERE quizid = :quizid",
+            ['quizid' => $quizid]
         );
         $page = $maxpage === null ? 0 : $maxpage + 1;
 
         // Get max slot number.
         $maxslot = $DB->get_field_sql(
-            "SELECT MAX(slot) FROM {quiz_slots} WHERE quizid = ?",
-            [$quizid]
+            "SELECT MAX(slot) FROM {quiz_slots} WHERE quizid = :quizid",
+            ['quizid' => $quizid]
         );
         $slot = $maxslot === null ? 1 : $maxslot + 1;
 

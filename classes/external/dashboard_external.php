@@ -151,8 +151,8 @@ class dashboard_external extends external_api {
         $avgregen = $DB->get_field_sql(
             "SELECT AVG(q.regeneration_count)
              FROM {local_hlai_quizgen_questions} q
-             WHERE q.userid = ?",
-            [$userid]
+             WHERE q.userid = :userid",
+            ['userid' => $userid]
         );
 
         return [
@@ -194,7 +194,8 @@ class dashboard_external extends external_api {
      */
     public static function get_question_type_distribution_parameters() {
         return new external_function_parameters([
-            'filtercourseid' => new external_value(PARAM_INT, 'Course ID to filter by (0 for all)', VALUE_DEFAULT, 0),
+            'filtercourseid' => new external_value(PARAM_INT,
+                get_string('ws_filtercourseid_desc', 'local_hlai_quizgen'), VALUE_DEFAULT, 0),
             'courseid' => new external_value(PARAM_INT, 'Course ID for context validation', VALUE_DEFAULT, 0),
         ]);
     }
@@ -228,17 +229,17 @@ class dashboard_external extends external_api {
 
         $userid = $USER->id;
 
-        $sqlparams = [$userid];
+        $sqlparams = ['userid' => $userid];
         $coursefilter = '';
         if ($filtercourseid > 0) {
-            $coursefilter = ' AND q.courseid = ?';
-            $sqlparams[] = $filtercourseid;
+            $coursefilter = ' AND q.courseid = :filtercourseid';
+            $sqlparams['filtercourseid'] = $filtercourseid;
         }
 
         $types = $DB->get_records_sql(
             "SELECT q.questiontype, COUNT(q.id) as count
              FROM {local_hlai_quizgen_questions} q
-             WHERE q.userid = ? $coursefilter
+             WHERE q.userid = :userid $coursefilter
              GROUP BY q.questiontype
              ORDER BY count DESC",
             $sqlparams
@@ -317,9 +318,9 @@ class dashboard_external extends external_api {
         $difficulties = $DB->get_records_sql(
             "SELECT q.difficulty, COUNT(q.id) as count
              FROM {local_hlai_quizgen_questions} q
-             WHERE q.userid = ?
+             WHERE q.userid = :userid
              GROUP BY q.difficulty",
-            [$userid]
+            ['userid' => $userid]
         );
 
         $dist = ['easy' => 0, 'medium' => 0, 'hard' => 0];
@@ -393,9 +394,9 @@ class dashboard_external extends external_api {
         $blooms = $DB->get_records_sql(
             "SELECT q.blooms_level, COUNT(q.id) as count
              FROM {local_hlai_quizgen_questions} q
-             WHERE q.userid = ? AND q.blooms_level IS NOT NULL
+             WHERE q.userid = :userid AND q.blooms_level IS NOT NULL
              GROUP BY q.blooms_level",
-            [$userid]
+            ['userid' => $userid]
         );
 
         $dist = [
@@ -450,7 +451,8 @@ class dashboard_external extends external_api {
      */
     public static function get_acceptance_trend_parameters() {
         return new external_function_parameters([
-            'limit' => new external_value(PARAM_INT, 'Number of recent generations to include', VALUE_DEFAULT, 10),
+            'limit' => new external_value(PARAM_INT,
+                get_string('ws_limit_generations_desc', 'local_hlai_quizgen'), VALUE_DEFAULT, 10),
             'courseid' => new external_value(PARAM_INT, 'Course ID for context validation', VALUE_DEFAULT, 0),
         ]);
     }
@@ -508,12 +510,12 @@ class dashboard_external extends external_api {
         $requestids = array_keys($requests);
         $ftarcounts = [];
         if (!empty($requestids)) {
-            [$insql, $inparams] = $DB->get_in_or_equal($requestids);
+            [$insql, $inparams] = $DB->get_in_or_equal($requestids, SQL_PARAMS_NAMED, 'rid');
             $inparams['ftar_status'] = 'approved';
             $ftarrecords = $DB->get_records_sql(
                 "SELECT requestid, COUNT(*) as cnt
                  FROM {local_hlai_quizgen_questions}
-                 WHERE requestid $insql AND status = :ftar_status AND regeneration_count = 0
+                 WHERE requestid {$insql} AND status = :ftar_status AND regeneration_count = 0
                  GROUP BY requestid",
                 $inparams
             );
@@ -611,9 +613,9 @@ class dashboard_external extends external_api {
                     SUM(CASE WHEN q.regeneration_count > 0 THEN 1 ELSE 0 END) as regenerated,
                     AVG(q.regeneration_count) as avg_regens
              FROM {local_hlai_quizgen_questions} q
-             WHERE q.userid = ?
+             WHERE q.userid = :userid
              GROUP BY q.questiontype",
-            [$userid]
+            ['userid' => $userid]
         );
 
         // Build object keyed by question type for dashboard.js compatibility.
@@ -710,8 +712,8 @@ class dashboard_external extends external_api {
                     SUM(CASE WHEN validation_score >= 81 AND validation_score <= 90 THEN 1 ELSE 0 END) AS r81_90,
                     SUM(CASE WHEN validation_score >= 91 AND validation_score <= 100 THEN 1 ELSE 0 END) AS r91_100
                 FROM {local_hlai_quizgen_questions}
-                WHERE userid = ?";
-        $row = $DB->get_record_sql($sql, [$userid]);
+                WHERE userid = :userid";
+        $row = $DB->get_record_sql($sql, ['userid' => $userid]);
 
         $labels = [];
         $values = [];
@@ -760,7 +762,8 @@ class dashboard_external extends external_api {
      */
     public static function get_recent_requests_parameters() {
         return new external_function_parameters([
-            'limit' => new external_value(PARAM_INT, 'Maximum number of requests to return', VALUE_DEFAULT, 5),
+            'limit' => new external_value(PARAM_INT,
+                get_string('ws_limit_requests_desc', 'local_hlai_quizgen'), VALUE_DEFAULT, 5),
             'courseid' => new external_value(PARAM_INT, 'Course ID for context validation', VALUE_DEFAULT, 0),
         ]);
     }
@@ -800,9 +803,9 @@ class dashboard_external extends external_api {
                     c.fullname as coursename
              FROM {local_hlai_quizgen_requests} r
              JOIN {course} c ON c.id = r.courseid
-             WHERE r.userid = ?
+             WHERE r.userid = :userid
              ORDER BY r.timecreated DESC",
-            [$userid],
+            ['userid' => $userid],
             0,
             $limit
         );
@@ -811,12 +814,12 @@ class dashboard_external extends external_api {
         $requestids = array_keys($requests);
         $approvedcounts = [];
         if (!empty($requestids)) {
-            [$insql, $inparams] = $DB->get_in_or_equal($requestids);
+            [$insql, $inparams] = $DB->get_in_or_equal($requestids, SQL_PARAMS_NAMED, 'rid');
             $inparams['appr_status'] = 'approved';
             $approvedrecords = $DB->get_records_sql(
                 "SELECT requestid, COUNT(*) as cnt
                  FROM {local_hlai_quizgen_questions}
-                 WHERE requestid $insql AND status = :appr_status
+                 WHERE requestid {$insql} AND status = :appr_status
                  GROUP BY requestid",
                 $inparams
             );

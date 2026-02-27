@@ -279,16 +279,17 @@ class question_generator {
         // DEDUPLICATION: Get previously generated questions for this request.
         $existingquestions = [];
         if ($requestid > 0) {
-            $existingrecords = $DB->get_records(
+            $rs = $DB->get_recordset(
                 'local_hlai_quizgen_questions',
                 ['requestid' => $requestid],
                 'id ASC',
                 'id, questiontext'
             );
-            foreach ($existingrecords as $rec) {
+            foreach ($rs as $rec) {
                 // Store just the first 100 chars of each question for context.
                 $existingquestions[] = substr(strip_tags($rec->questiontext), 0, 100);
             }
+            $rs->close();
         }
 
         // Use FULL content from activities (cached, extracted once per request).

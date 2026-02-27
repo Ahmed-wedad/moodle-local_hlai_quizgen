@@ -198,13 +198,26 @@ class api {
 
         $questions = $DB->get_records('local_hlai_quizgen_questions', $params, 'timecreated ASC');
 
-        // Load answers for each question.
-        foreach ($questions as $question) {
-            $question->answers = $DB->get_records(
-                'local_hlai_quizgen_answers',
-                ['questionid' => $question->id],
-                'sortorder ASC'
+        // Bulk-load all answers for these questions to avoid N+1 queries.
+        $questionids = array_keys($questions);
+        $allanswers = [];
+        if (!empty($questionids)) {
+            [$insql, $inparams] = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED);
+            $rs = $DB->get_recordset_sql(
+                "SELECT * FROM {local_hlai_quizgen_answers}
+                  WHERE questionid {$insql}
+               ORDER BY questionid, sortorder ASC",
+                $inparams
             );
+            foreach ($rs as $ans) {
+                $allanswers[$ans->questionid][$ans->id] = $ans;
+            }
+            $rs->close();
+        }
+
+        // Attach pre-loaded answers and validation badges.
+        foreach ($questions as $question) {
+            $question->answers = $allanswers[$question->id] ?? [];
 
             // Add validation badge if available.
             if (!empty($question->quality_rating)) {
@@ -569,9 +582,9 @@ class api {
             "SELECT qc.id, qc.name, qc.contextid, qc.parent,
                     (SELECT COUNT(*) FROM {question_bank_entries} qbe WHERE qbe.questioncategoryid = qc.id) as question_count
              FROM {question_categories} qc
-             WHERE qc.contextid = ?
+             WHERE qc.contextid = :contextid
              ORDER BY qc.id DESC",
-            [$context->id]
+            ['contextid' => $context->id]
         );
         foreach ($categories as $cat) {
             $result['categories'][] = [

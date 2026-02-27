@@ -116,9 +116,9 @@ class diagnostic_external extends external_api {
                 JOIN {question_versions} qv ON qv.questionid = q.id
                 JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                 JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
-                WHERE qc.contextid = ?";
+                WHERE qc.contextid = :contextid";
 
-        $rs = $DB->get_recordset_sql($sql, [$coursecontext->id]);
+        $rs = $DB->get_recordset_sql($sql, ['contextid' => $coursecontext->id]);
         $questioncount = 0;
 
         // Try to fix each question using direct SQL if needed.
@@ -258,9 +258,9 @@ class diagnostic_external extends external_api {
                 JOIN {question_versions} qv ON qv.questionid = q.id
                 JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                 JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
-                WHERE qc.contextid = ?";
+                WHERE qc.contextid = :contextid";
 
-        $rs = $DB->get_recordset_sql($sql, [$coursecontext->id]);
+        $rs = $DB->get_recordset_sql($sql, ['contextid' => $coursecontext->id]);
 
         $bytype = [];
         $missingtypedata = [];
@@ -434,8 +434,8 @@ class diagnostic_external extends external_api {
             $sql = "SELECT COUNT(*) as cnt
                     FROM {question_bank_entries} qbe
                     JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
-                    WHERE qc.contextid = ?";
-            $count = $DB->get_field_sql($sql, [$coursecontext->id]);
+                    WHERE qc.contextid = :contextid";
+            $count = $DB->get_field_sql($sql, ['contextid' => $coursecontext->id]);
             $extrainfo['questions_in_bank_entries'] = (int) $count;
 
             // Check for orphaned questions (no bank entry).
@@ -453,9 +453,9 @@ class diagnostic_external extends external_api {
                     JOIN {question_versions} qv ON qv.questionid = q.id
                     JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                     JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
-                    WHERE qc.contextid = ?";
+                    WHERE qc.contextid = :contextid";
 
-            $rs = $DB->get_recordset_sql($sql, [$coursecontext->id]);
+            $rs = $DB->get_recordset_sql($sql, ['contextid' => $coursecontext->id]);
             $found = 0;
 
             foreach ($rs as $q) {
@@ -605,9 +605,9 @@ class diagnostic_external extends external_api {
                         (SELECT COUNT(*) FROM {question_bank_entries} qbe
                          WHERE qbe.questioncategoryid = qc.id) as question_count
                  FROM {question_categories} qc
-                 WHERE qc.contextid = ?
+                 WHERE qc.contextid = :contextid
                  ORDER BY qc.id DESC",
-                [$coursecontext->id]
+                ['contextid' => $coursecontext->id]
             );
             $diagnostic['categories_in_course'] = [];
             foreach ($categories as $cat) {

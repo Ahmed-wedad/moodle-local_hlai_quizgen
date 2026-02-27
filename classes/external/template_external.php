@@ -160,9 +160,9 @@ class template_external extends external_api {
         $templates = $DB->get_records_sql(
             "SELECT id, setting_name, setting_value
              FROM {local_hlai_quizgen_settings}
-             WHERE userid = ? AND setting_name LIKE 'template_%'
+             WHERE userid = :userid AND setting_name LIKE 'template_%'
              ORDER BY timecreated DESC",
-            [$USER->id]
+            ['userid' => $USER->id]
         );
 
         $items = [];

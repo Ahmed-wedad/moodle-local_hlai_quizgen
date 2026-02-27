@@ -129,15 +129,15 @@ if ($action === 'approve_all_questions' && confirm_sesskey()) {
     // Approve all pending questions for this request in a single bulk update.
     $approvedcount = $DB->count_records_select(
         'local_hlai_quizgen_questions',
-        'requestid = ? AND status != ?',
-        [$requestid, 'approved']
+        'requestid = :requestid AND status != :status',
+        ['requestid' => $requestid, 'status' => 'approved']
     );
     $DB->set_field_select(
         'local_hlai_quizgen_questions',
         'status',
         'approved',
-        'requestid = ? AND status != ?',
-        [$requestid, 'approved']
+        'requestid = :requestid AND status != :status',
+        ['requestid' => $requestid, 'status' => 'approved']
     );
 
     redirect(
@@ -433,10 +433,10 @@ function local_hlai_quizgen_handle_content_upload(int $courseid, context $contex
         // Check for duplicate content in this course from the last 30 days.
         $existingrequest = $DB->get_record_sql(
             "SELECT * FROM {local_hlai_quizgen_requests}
-             WHERE courseid = ? AND content_hash = ? AND timecreated > ?
+             WHERE courseid = :courseid AND content_hash = :contenthash AND timecreated > :mintimecreated
              ORDER BY timecreated DESC
              LIMIT 1",
-            [$courseid, $contenthash, time() - (30 * 24 * 60 * 60)]
+            ['courseid' => $courseid, 'contenthash' => $contenthash, 'mintimecreated' => time() - (30 * 24 * 60 * 60)]
         );
     }
 
@@ -1009,12 +1009,12 @@ function local_hlai_quizgen_handle_bulk_action(string $action, int $requestid) {
     $courseid = $DB->get_field('local_hlai_quizgen_requests', 'courseid', ['id' => $requestid]);
 
     // Batch-fetch all questions to avoid N+1 query pattern.
-    [$insql, $inparams] = $DB->get_in_or_equal($questionids);
-    $params = array_merge($inparams, [$requestid]);
+    [$insql, $inparams] = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'qid');
+    $inparams['requestid'] = $requestid;
     $questions = $DB->get_records_select(
         'local_hlai_quizgen_questions',
-        "id $insql AND requestid = ?",
-        $params
+        "id {$insql} AND requestid = :requestid",
+        $inparams
     );
 
     $count = 0;
@@ -1092,10 +1092,10 @@ function local_hlai_quizgen_auto_recover_tracking(array $questionids, int $cours
         $modulecontexts = $DB->get_records_sql(
             "SELECT ctx.id
              FROM {context} ctx
-             JOIN {course_modules} cm ON cm.id = ctx.instanceid AND ctx.contextlevel = ?
+             JOIN {course_modules} cm ON cm.id = ctx.instanceid AND ctx.contextlevel = :ctxlevel
              JOIN {modules} m ON m.id = cm.module
-             WHERE cm.course = ? AND m.name IN ('quiz', 'qbank')",
-            [CONTEXT_MODULE, $courseid]
+             WHERE cm.course = :courseid AND m.name IN ('quiz', 'qbank')",
+            ['ctxlevel' => CONTEXT_MODULE, 'courseid' => $courseid]
         );
         foreach ($modulecontexts as $mctx) {
             $contextids[] = $mctx->id;
@@ -1108,41 +1108,42 @@ function local_hlai_quizgen_auto_recover_tracking(array $questionids, int $cours
         count($contextids) . " contexts for course $courseid", DEBUG_DEVELOPER);
 
     // Build placeholders for IN clause.
-    [$insql, $inparams] = $DB->get_in_or_equal($contextids, SQL_PARAMS_QM);
+    [$insql, $inparams] = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'ctx');
 
     // Bulk-fetch all plugin questions in one query to avoid N+1 SELECT per question ID.
-    [$qinsql, $qinparams] = $DB->get_in_or_equal($questionids);
-    $questions = $DB->get_records_select('local_hlai_quizgen_questions', "id $qinsql", $qinparams);
+    [$qinsql, $qinparams] = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'qid');
+    $questions = $DB->get_records_select('local_hlai_quizgen_questions', "id {$qinsql}", $qinparams);
 
     foreach ($questions as $q) {
         $qid = $q->id;
 
-        // Already tracked — just ensure status is correct.
+        // Already tracked - just ensure status is correct.
         if (!empty($q->moodle_questionid)) {
             $DB->set_field('local_hlai_quizgen_questions', 'status', 'deployed', ['id' => $qid]);
             $tracked++;
             continue;
         }
 
-        // NOT tracked — attempt auto-recovery by searching ALL relevant question banks.
+        // NOT tracked - attempt auto-recovery by searching ALL relevant question banks.
         $questiontext = $q->questiontext ?? '';
         $qtype = ($q->questiontype === 'scenario') ? 'essay' : $q->questiontype;
 
         if (!empty($questiontext)) {
             // Search course context + all module contexts (Moodle 4.x + 5.x compatible).
-            $params = array_merge($inparams, [$questiontext, $qtype]);
+            $inparams['questiontext'] = $questiontext;
+            $inparams['qtype'] = $qtype;
             $match = $DB->get_record_sql(
                 "SELECT q.id
                  FROM {question} q
                  JOIN {question_versions} qv ON qv.questionid = q.id
                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                  JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
-                 WHERE qc.contextid $insql
-                 AND q.questiontext = ?
-                 AND q.qtype = ?
+                 WHERE qc.contextid {$insql}
+                 AND q.questiontext = :questiontext
+                 AND q.qtype = :qtype
                  ORDER BY q.id DESC
                  LIMIT 1",
-                $params
+                $inparams
             );
 
             if ($match) {
@@ -1160,7 +1161,7 @@ function local_hlai_quizgen_auto_recover_tracking(array $questionids, int $cours
             }
         }
 
-        // Could not auto-recover — reset to approved so user can re-deploy.
+        // Could not auto-recover - reset to approved so user can re-deploy.
         $DB->set_field('local_hlai_quizgen_questions', 'status', 'approved', ['id' => $qid]);
         $untracked++;
     }
@@ -2090,7 +2091,7 @@ function local_hlai_quizgen_render_step4(int $courseid, int $requestid): string 
         'has_questions' => false,
     ];
 
-    // Check request status — pending (still generating).
+    // Check request status - pending (still generating).
     if ($request->status === 'pending') {
         $context['is_pending'] = true;
         $context['generating_title'] = get_string('wizard_generating_questions_ellipsis', 'local_hlai_quizgen');

@@ -31,5 +31,6 @@ $plugin->supported = [401, 500];        // Moodle 4.1.9+ to 5.0.x.
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->release   = '1.6.7';
 $plugin->dependencies = [
-    // No peer plugin dependencies. Uses core question bank and mod_quiz APIs.
+    'mod_quiz' => ANY_VERSION,
+    'mod_scorm' => ANY_VERSION,
 ];

@@ -107,10 +107,10 @@ class wizard_external extends external_api {
                     q.validation_score, t.title as topic_title
              FROM {local_hlai_quizgen_questions} q
              LEFT JOIN {local_hlai_quizgen_topics} t ON t.id = q.topicid
-             WHERE q.requestid = ?
+             WHERE q.requestid = :requestid
              ORDER BY q.timecreated DESC
              LIMIT 5",
-            [$requestid]
+            ['requestid' => $requestid]
         );
 
         // Get topic progress (selected topics only).
@@ -118,9 +118,9 @@ class wizard_external extends external_api {
             "SELECT t.id, t.title, t.num_questions as target,
                     (SELECT COUNT(*) FROM {local_hlai_quizgen_questions} q WHERE q.topicid = t.id) as generated
              FROM {local_hlai_quizgen_topics} t
-             WHERE t.requestid = ? AND t.selected = 1
+             WHERE t.requestid = :requestid AND t.selected = 1
              ORDER BY t.id",
-            [$requestid]
+            ['requestid' => $requestid]
         );
 
         // Build activity log from recent questions.
