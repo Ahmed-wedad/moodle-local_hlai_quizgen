@@ -1150,7 +1150,8 @@ function local_hlai_quizgen_auto_recover_tracking(array $questionids, int $cours
                 $mqinparams,
                 'id DESC',
                 'id',
-                0, 1
+                0,
+                1
             );
             $match = !empty($matches) ? reset($matches) : null;
 
@@ -2197,7 +2198,10 @@ function local_hlai_quizgen_render_step4(int $courseid, int $requestid): string 
     $allanswers = [];
     if (!empty($questionids)) {
         $answersraw = $DB->get_records_list(
-            'local_hlai_quizgen_answers', 'questionid', $questionids, 'questionid, sortorder ASC'
+            'local_hlai_quizgen_answers',
+            'questionid',
+            $questionids,
+            'questionid, sortorder ASC'
         );
         foreach ($answersraw as $ans) {
             $allanswers[$ans->questionid][] = $ans;

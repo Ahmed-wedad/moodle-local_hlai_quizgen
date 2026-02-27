@@ -501,7 +501,8 @@ class api {
         // Average questions per request.
         if ($stats['total_requests'] > 0) {
             $stats['average_questions_per_request'] = round(
-                $stats['total_questions'] / $stats['total_requests'], 1
+                $stats['total_questions'] / $stats['total_requests'],
+                1
             );
         }
 
@@ -561,7 +562,10 @@ class api {
 
             // Fetch question versions and bank entries separately to avoid SQL concatenation.
             $allversions = $DB->get_records_list(
-                'question_versions', 'questionid', $moodleqids, 'questionid, version DESC'
+                'question_versions',
+                'questionid',
+                $moodleqids,
+                'questionid, version DESC'
             );
             $latestversions = [];
             foreach ($allversions as $v) {

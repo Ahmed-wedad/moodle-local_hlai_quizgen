@@ -1210,7 +1210,10 @@ class content_extractor {
         if (!empty($discussions)) {
             $discussionids = array_keys($discussions);
             $allposts = $DB->get_records_list(
-                'forum_posts', 'discussion', $discussionids, 'discussion, created ASC'
+                'forum_posts',
+                'discussion',
+                $discussionids,
+                'discussion, created ASC'
             );
             foreach ($allposts as $post) {
                 $postsbydiscussion[$post->discussion][] = $post;

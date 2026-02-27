@@ -1260,7 +1260,10 @@ class quiz_deployer {
 
         // Batch-fetch question bank entries to avoid N+1 queries.
         $allversions = $DB->get_records_list(
-            'question_versions', 'questionid', $questionids, 'questionid, version DESC'
+            'question_versions',
+            'questionid',
+            $questionids,
+            'questionid, version DESC'
         );
         // Keep only the latest version per questionid.
         $versionmap = [];

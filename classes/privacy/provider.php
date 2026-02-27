@@ -799,7 +799,10 @@ class provider implements
         // Bulk-delete reviews where users are reviewer/submitter, scoped to this course.
         // Break JOIN into separate select queries to avoid SQL variable concatenation.
         $courseqids = $DB->get_fieldset_select(
-            'local_hlai_quizgen_questions', 'id', 'courseid = :courseid', ['courseid' => $courseid]
+            'local_hlai_quizgen_questions',
+            'id',
+            'courseid = :courseid',
+            ['courseid' => $courseid]
         );
         $reviewids = [];
         if (!empty($courseqids)) {
@@ -807,7 +810,8 @@ class provider implements
             // Reviews where reviewer is one of the users.
             $params1 = array_merge($qinparams, $uinparams);
             $revids1 = $DB->get_fieldset_select(
-                'local_hlai_quizgen_reviews', 'id',
+                'local_hlai_quizgen_reviews',
+                'id',
                 "questionid " . $qinsql . " AND reviewerid " . $uinsql,
                 $params1
             );
@@ -815,7 +819,8 @@ class provider implements
             [$uinsql2, $uinparams2] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'uid2');
             $params2 = array_merge($qinparams, $uinparams2);
             $revids2 = $DB->get_fieldset_select(
-                'local_hlai_quizgen_reviews', 'id',
+                'local_hlai_quizgen_reviews',
+                'id',
                 "questionid " . $qinsql . " AND submitterid " . $uinsql2,
                 $params2
             );
