@@ -33,4 +33,3 @@ $plugin->release   = '1.6.7';
 $plugin->dependencies = [
     // No peer plugin dependencies. Uses core question bank and mod_quiz APIs.
 ];
-   

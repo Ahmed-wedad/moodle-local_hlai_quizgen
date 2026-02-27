@@ -606,7 +606,7 @@ class provider implements
 
         // Delete logs linked to requests in this course.
         if (!empty($requestids)) {
-            list($insql, $inparams) = $DB->get_in_or_equal($requestids, SQL_PARAMS_NAMED, 'req');
+            [$insql, $inparams] = $DB->get_in_or_equal($requestids, SQL_PARAMS_NAMED, 'req');
             $DB->delete_records_select('local_hlai_quizgen_logs', "requestid {$insql}", $inparams);
         }
 
@@ -670,7 +670,7 @@ class provider implements
 
             // Delete user logs linked to their requests in this course.
             if (!empty($requestids)) {
-                list($insql, $inparams) = $DB->get_in_or_equal($requestids, SQL_PARAMS_NAMED, 'req');
+                [$insql, $inparams] = $DB->get_in_or_equal($requestids, SQL_PARAMS_NAMED, 'req');
                 $inparams['userid'] = $userid;
                 $DB->delete_records_select(
                     'local_hlai_quizgen_logs',
@@ -772,7 +772,7 @@ class provider implements
 
             // Delete user logs linked to their requests in this course.
             if (!empty($requestids)) {
-                list($insql, $inparams) = $DB->get_in_or_equal($requestids, SQL_PARAMS_NAMED, 'req');
+                [$insql, $inparams] = $DB->get_in_or_equal($requestids, SQL_PARAMS_NAMED, 'req');
                 $inparams['userid'] = $userid;
                 $DB->delete_records_select(
                     'local_hlai_quizgen_logs',
