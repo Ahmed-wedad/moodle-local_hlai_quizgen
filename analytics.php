@@ -216,6 +216,20 @@ $PAGE->requires->js_call_amd('local_hlai_quizgen/analytics', 'init', [[
     'difficultyStats' => array_values($difficultystats),
     'bloomsStats' => array_values($bloomsstats),
     'rejectionReasons' => array_values($rejectionreasons),
+    'strings' => [
+        'questions' => get_string('chart_questions', 'local_hlai_quizgen'),
+        'generated' => get_string('chart_generated', 'local_hlai_quizgen'),
+        'reviewed' => get_string('chart_reviewed', 'local_hlai_quizgen'),
+        'approved' => get_string('chart_approved', 'local_hlai_quizgen'),
+        'deployed' => get_string('chart_deployed', 'local_hlai_quizgen'),
+        'total' => get_string('chart_total', 'local_hlai_quizgen'),
+        'qualityScoreRange' => get_string('chart_quality_score_range', 'local_hlai_quizgen'),
+        'percentageOfQuestions' => get_string('chart_percentage_of_questions', 'local_hlai_quizgen'),
+        'numberOfQuestions' => get_string('chart_number_of_questions', 'local_hlai_quizgen'),
+        'numberOfRegenerations' => get_string('chart_number_of_regenerations', 'local_hlai_quizgen'),
+        'percentage' => get_string('chart_percentage', 'local_hlai_quizgen'),
+        'avgRegenerations' => get_string('chart_avg_regenerations', 'local_hlai_quizgen'),
+    ],
 ]]);
 
 // Output starts here.

@@ -47,6 +47,7 @@ define(['jquery', 'local_hlai_quizgen/charts'], function($, Charts) {
             this.sesskey = config.sesskey;
             this.timerange = config.timerange;
             this.initData = config;
+            this.strings = config.strings || {};
 
             // Wait for ApexCharts to load
             this.waitForApexCharts().then(function() {
@@ -115,9 +116,16 @@ define(['jquery', 'local_hlai_quizgen/charts'], function($, Charts) {
             var approved = stats.approved || 0;
             var pending = stats.pending || 0;
 
+            var str = Analytics.strings;
+            var funnelLabels = [
+                str.generated || 'Generated',
+                str.reviewed || 'Reviewed',
+                str.approved || 'Approved',
+                str.deployed || 'Deployed'
+            ];
             var options = {
                 series: [{
-                    name: 'Questions',
+                    name: str.questions || 'Questions',
                     data: [total, total - pending, approved, Math.round(approved * 0.8)]
                 }],
                 chart: {
@@ -141,8 +149,7 @@ define(['jquery', 'local_hlai_quizgen/charts'], function($, Charts) {
                     enabled: true,
                     textAnchor: 'start',
                     formatter: function(val, opt) {
-                        var labels = ['Generated', 'Reviewed', 'Approved', 'Deployed'];
-                        return labels[opt.dataPointIndex] + ': ' + val;
+                        return funnelLabels[opt.dataPointIndex] + ': ' + val;
                     },
                     offsetX: 10,
                     style: {
@@ -151,7 +158,7 @@ define(['jquery', 'local_hlai_quizgen/charts'], function($, Charts) {
                     }
                 },
                 xaxis: {
-                    categories: ['Generated', 'Reviewed', 'Approved', 'Deployed']
+                    categories: funnelLabels
                 },
                 yaxis: {
                     labels: {show: false}
@@ -174,9 +181,10 @@ define(['jquery', 'local_hlai_quizgen/charts'], function($, Charts) {
             // Simulated distribution - in production, this would come from AJAX
             var distribution = [5, 10, 25, 35, 25]; // 0-20, 21-40, 41-60, 61-80, 81-100
 
+            var str = Analytics.strings;
             var options = {
                 series: [{
-                    name: 'Questions',
+                    name: str.questions || 'Questions',
                     data: distribution
                 }],
                 chart: {
@@ -200,10 +208,10 @@ define(['jquery', 'local_hlai_quizgen/charts'], function($, Charts) {
                 },
                 xaxis: {
                     categories: ['0-20', '21-40', '41-60', '61-80', '81-100'],
-                    title: {text: 'Quality Score Range'}
+                    title: {text: str.qualityScoreRange || 'Quality Score Range'}
                 },
                 yaxis: {
-                    title: {text: 'Percentage of Questions'}
+                    title: {text: str.percentageOfQuestions || 'Percentage of Questions'}
                 },
                 legend: {show: false}
             };
@@ -233,10 +241,11 @@ define(['jquery', 'local_hlai_quizgen/charts'], function($, Charts) {
                 }
             });
 
+            var str = Analytics.strings;
             var options = {
                 series: [
-                    {name: 'Total', data: totalData},
-                    {name: 'Approved', data: approvedData}
+                    {name: str.total || 'Total', data: totalData},
+                    {name: str.approved || 'Approved', data: approvedData}
                 ],
                 chart: {
                     type: 'bar',
@@ -253,7 +262,7 @@ define(['jquery', 'local_hlai_quizgen/charts'], function($, Charts) {
                 colors: ['#94A3B8', '#10B981'],
                 dataLabels: {enabled: false},
                 xaxis: {categories: categories},
-                yaxis: {title: {text: 'Number of Questions'}},
+                yaxis: {title: {text: str.numberOfQuestions || 'Number of Questions'}},
                 legend: {
                     position: 'top',
                     horizontalAlign: 'right'
@@ -313,8 +322,9 @@ define(['jquery', 'local_hlai_quizgen/charts'], function($, Charts) {
             });
 
             // Use custom radar chart with filled styling like dashboard
+            var str = Analytics.strings;
             var options = {
-                series: [{name: 'Questions', data: series}],
+                series: [{name: str.questions || 'Questions', data: series}],
                 chart: {
                     type: 'radar',
                     height: 350,
@@ -374,9 +384,10 @@ define(['jquery', 'local_hlai_quizgen/charts'], function($, Charts) {
             }
 
             // Simulated data - in production from AJAX
+            var str = Analytics.strings;
             var options = {
                 series: [{
-                    name: 'Questions',
+                    name: str.questions || 'Questions',
                     data: [65, 20, 10, 3, 2]
                 }],
                 chart: {
@@ -400,10 +411,10 @@ define(['jquery', 'local_hlai_quizgen/charts'], function($, Charts) {
                 },
                 xaxis: {
                     categories: ['0', '1', '2', '3', '4+'],
-                    title: {text: 'Number of Regenerations'}
+                    title: {text: str.numberOfRegenerations || 'Number of Regenerations'}
                 },
                 yaxis: {
-                    title: {text: 'Percentage'}
+                    title: {text: str.percentage || 'Percentage'}
                 },
                 legend: {show: false}
             };
@@ -420,9 +431,10 @@ define(['jquery', 'local_hlai_quizgen/charts'], function($, Charts) {
                 return;
             }
 
+            var str = Analytics.strings;
             var options = {
                 series: [{
-                    name: 'Avg Regenerations',
+                    name: str.avgRegenerations || 'Avg Regenerations',
                     data: [0.8, 1.2, 1.8]
                 }],
                 chart: {
@@ -442,7 +454,7 @@ define(['jquery', 'local_hlai_quizgen/charts'], function($, Charts) {
                 dataLabels: {enabled: true},
                 xaxis: {
                     categories: ['Easy', 'Medium', 'Hard'],
-                    title: {text: 'Avg Regenerations'}
+                    title: {text: str.avgRegenerations || 'Avg Regenerations'}
                 },
                 legend: {show: false}
             };
@@ -503,10 +515,11 @@ define(['jquery', 'local_hlai_quizgen/charts'], function($, Charts) {
                 approved.push(Math.floor(gen * (0.6 + Math.random() * 0.3)));
             }
 
+            var str = Analytics.strings;
             var options = {
                 series: [
-                    {name: 'Generated', data: generated},
-                    {name: 'Approved', data: approved}
+                    {name: str.generated || 'Generated', data: generated},
+                    {name: str.approved || 'Approved', data: approved}
                 ],
                 chart: {
                     type: 'area',
@@ -535,7 +548,7 @@ define(['jquery', 'local_hlai_quizgen/charts'], function($, Charts) {
                     }
                 },
                 yaxis: {
-                    title: {text: 'Questions'}
+                    title: {text: str.questions || 'Questions'}
                 },
                 legend: {
                     position: 'top',

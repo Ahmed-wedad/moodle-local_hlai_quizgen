@@ -42,6 +42,7 @@ define(['jquery'], function($) {
          */
         init: function(data) {
             var self = this;
+            this.strings = data.strings || {};
             this.waitForApexCharts().then(function() {
                 self.renderCharts(data);
                 return undefined;
@@ -100,9 +101,10 @@ define(['jquery'], function($) {
                 return;
             }
 
+            var str = AdminDashboard.strings;
             var usageTrendOptions = {
                 series: [{
-                    name: 'Questions Generated',
+                    name: str.questionsGenerated || 'Questions Generated',
                     data: data.trendCounts
                 }],
                 chart: {
@@ -148,6 +150,7 @@ define(['jquery'], function($) {
                 return;
             }
 
+            var str = AdminDashboard.strings;
             var adoptionOptions = {
                 series: [data.activeTeachers, data.inactiveTeachers],
                 chart: {
@@ -155,7 +158,7 @@ define(['jquery'], function($) {
                     height: 250,
                     fontFamily: 'inherit'
                 },
-                labels: ['Active Teachers', 'Inactive Teachers'],
+                labels: [str.activeTeachers || 'Active Teachers', str.inactiveTeachers || 'Inactive Teachers'],
                 colors: ['#10B981', '#BFDBFE'],
                 legend: {
                     position: 'bottom',
@@ -184,7 +187,7 @@ define(['jquery'], function($) {
                                 show: true,
                                 total: {
                                     show: true,
-                                    label: 'Total Users',
+                                    label: str.totalUsers || 'Total Users',
                                     fontSize: '14px',
                                     fontWeight: 600,
                                     color: '#334155'
@@ -205,7 +208,7 @@ define(['jquery'], function($) {
                 tooltip: {
                     y: {
                         formatter: function(value) {
-                            return value + ' teachers';
+                            return value + (AdminDashboard.strings.teachersSuffix || ' teachers');
                         }
                     }
                 }
@@ -225,9 +228,10 @@ define(['jquery'], function($) {
                 return;
             }
 
+            var str = AdminDashboard.strings;
             var bloomsOptions = {
                 series: [{
-                    name: 'Questions',
+                    name: str.questions || 'Questions',
                     data: data.bloomsValues
                 }],
                 chart: {
@@ -262,9 +266,10 @@ define(['jquery'], function($) {
                 return;
             }
 
+            var str = AdminDashboard.strings;
             var questionTypeOptions = {
                 series: [{
-                    name: 'Questions',
+                    name: str.questions || 'Questions',
                     data: data.typeValues
                 }],
                 chart: {
@@ -299,9 +304,10 @@ define(['jquery'], function($) {
                 return;
             }
 
+            var str = AdminDashboard.strings;
             var difficultyOptions = {
                 series: [{
-                    name: 'Questions',
+                    name: str.questions || 'Questions',
                     data: data.difficultyValues
                 }],
                 chart: {

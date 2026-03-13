@@ -241,6 +241,14 @@ $PAGE->requires->js_call_amd('local_hlai_quizgen/admindashboard', 'init', [[
     'typeValues' => $typevalues,
     'difficultyLabels' => $difficultylabels,
     'difficultyValues' => $difficultyvalues,
+    'strings' => [
+        'questionsGenerated' => get_string('chart_questions_generated', 'local_hlai_quizgen'),
+        'activeTeachers' => get_string('chart_active_teachers', 'local_hlai_quizgen'),
+        'inactiveTeachers' => get_string('chart_inactive_teachers', 'local_hlai_quizgen'),
+        'totalUsers' => get_string('chart_total_users', 'local_hlai_quizgen'),
+        'teachersSuffix' => get_string('chart_teachers_suffix', 'local_hlai_quizgen'),
+        'questions' => get_string('chart_questions', 'local_hlai_quizgen'),
+    ],
 ]]);
 
 // Output HTML.

@@ -1894,7 +1894,7 @@ function local_hlai_quizgen_render_step2(int $courseid, int $requestid): string 
                 /**
                  * Update selected count.
                  */
-                function updateSelectedCount() {
+                function update_selected_count() {
                     var count = $('input.hlai-topic-checkbox:checked').length;
                     var text = topicsSelectedTemplate.replace('__COUNT__', count);
                     $('#selected-topics-count').text(text);
@@ -1918,20 +1918,20 @@ function local_hlai_quizgen_render_step2(int $courseid, int $requestid): string 
 
                 $('#select-all-topics').on('click', function() {
                     $('input.hlai-topic-checkbox').prop('checked', true);
-                    updateSelectedCount();
+                    update_selected_count();
                 });
                 $('#deselect-all-topics').on('click', function() {
                     $('input.hlai-topic-checkbox').prop('checked', false);
-                    updateSelectedCount();
+                    update_selected_count();
                 });
 
                 // Update on individual checkbox change.
                 $(document).on('change', 'input.hlai-topic-checkbox', function() {
-                    updateSelectedCount();
+                    update_selected_count();
                 });
 
                 // Initial count on page load.
-                updateSelectedCount();
+                update_selected_count();
             });
         ");
     } else {

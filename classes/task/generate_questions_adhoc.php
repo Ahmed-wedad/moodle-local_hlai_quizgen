@@ -251,16 +251,25 @@ class generate_questions_adhoc extends \core\task\adhoc_task {
             $questiontexts = [];
             $questionids = [];
             $questionanswers = []; // Track answers for answer-based dedup.
+
+            // Bulk-load all correct answers to avoid N+1 queries.
+            $allqids = array_keys($allquestions);
+            $correctanswersmap = [];
+            if (!empty($allqids)) {
+                list($insql, $inparams) = $DB->get_in_or_equal($allqids, SQL_PARAMS_NAMED);
+                $sql = "SELECT questionid, answer
+                          FROM {local_hlai_quizgen_answers}
+                         WHERE questionid {$insql} AND is_correct = 1";
+                $answers = $DB->get_records_sql($sql, $inparams);
+                foreach ($answers as $ans) {
+                    $correctanswersmap[$ans->questionid] = strtolower(trim($ans->answer));
+                }
+            }
+
             foreach ($allquestions as $q) {
                 $questiontexts[] = $q->questiontext;
                 $questionids[] = $q->id;
-                // Get the correct answer for this question (for shortanswer dedup).
-                $correctanswer = $DB->get_record(
-                    'local_hlai_quizgen_answers',
-                    ['questionid' => $q->id, 'is_correct' => 1],
-                    'answer'
-                );
-                $questionanswers[] = $correctanswer ? strtolower(trim($correctanswer->answer)) : '';
+                $questionanswers[] = $correctanswersmap[$q->id] ?? '';
             }
 
             $idstoremove = [];
