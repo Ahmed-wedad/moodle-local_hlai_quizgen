@@ -402,38 +402,62 @@ define(['jquery'], function($) {
                     if (label) {
                         label.innerText = fileCount + ' file(s) selected';
                     }
-                    var fileNames = '<div class="mt-2"><strong>Selected files:</strong><ul class="mb-0">';
+                    // Build file list using DOM methods instead of innerHTML.
+                    var wrapper = document.createElement('div');
+                    wrapper.className = 'mt-2';
+                    var heading = document.createElement('strong');
+                    heading.textContent = 'Selected files:';
+                    wrapper.appendChild(heading);
+                    var ul = document.createElement('ul');
+                    ul.className = 'mb-0';
+
                     Array.from(e.target.files).forEach(function(file) {
-                        // Safely escape the file name via textContent.
-                        var safeEl = document.createElement('div');
-                        safeEl.textContent = file.name;
-                        var safeFileName = safeEl.innerHTML;
                         var fileSizeMB = (file.size / 1024 / 1024).toFixed(2);
-                        var sizeClass = file.size > maxFileSizeBytes ? 'text-danger' : 'text-muted';
+                        var li = document.createElement('li');
+                        var sizeSpan = document.createElement('span');
+                        sizeSpan.textContent = '(' + fileSizeMB + ' MB)';
 
                         if (file.size > maxFileSizeBytes) {
                             hasOversizedFiles = true;
                             oversizedFileNames.push(file.name + ' (' + fileSizeMB + ' MB)');
-                            fileNames += '<li class="text-danger">' + safeFileName +
-                                ' <span class="' + sizeClass + '">(' + fileSizeMB + ' MB) - TOO LARGE!</span></li>';
+                            li.className = 'text-danger';
+                            li.textContent = file.name + ' ';
+                            sizeSpan.className = 'text-danger';
+                            sizeSpan.textContent = '(' + fileSizeMB + ' MB) - TOO LARGE!';
                         } else {
-                            fileNames += '<li>' + safeFileName +
-                                ' <span class="' + sizeClass + '">(' + fileSizeMB + ' MB)</span></li>';
+                            li.textContent = file.name + ' ';
+                            sizeSpan.className = 'text-muted';
                         }
+                        li.appendChild(sizeSpan);
+                        ul.appendChild(li);
                     });
-                    fileNames += '</ul></div>';
+                    wrapper.appendChild(ul);
 
                     if (hasOversizedFiles) {
-                        fileNames += '<div class="notification is-danger is-light mt-2"><strong>Error:</strong> ' +
-                            'The following files exceed the maximum size of ' + maxFileSizeMB + ' MB:<ul>';
+                        var errDiv = document.createElement('div');
+                        errDiv.className = 'notification is-danger is-light mt-2';
+                        var errStrong = document.createElement('strong');
+                        errStrong.textContent = 'Error:';
+                        errDiv.appendChild(errStrong);
+                        errDiv.appendChild(document.createTextNode(
+                            ' The following files exceed the maximum size of ' + maxFileSizeMB + ' MB:'
+                        ));
+                        var errUl = document.createElement('ul');
                         oversizedFileNames.forEach(function(fname) {
-                            fileNames += '<li>' + fname + '</li>';
+                            var errLi = document.createElement('li');
+                            errLi.textContent = fname;
+                            errUl.appendChild(errLi);
                         });
-                        fileNames += '</ul>Please remove these files before submitting.</div>';
+                        errDiv.appendChild(errUl);
+                        errDiv.appendChild(document.createTextNode('Please remove these files before submitting.'));
+                        wrapper.appendChild(errDiv);
                     }
 
                     if (fileList) {
-                        fileList.innerHTML = fileNames;
+                        while (fileList.firstChild) {
+                            fileList.removeChild(fileList.firstChild);
+                        }
+                        fileList.appendChild(wrapper);
                     }
                 } else {
                     var chooseFilesText = (self.config.strings && self.config.strings.choose_files)
@@ -443,7 +467,9 @@ define(['jquery'], function($) {
                         label.innerText = chooseFilesText;
                     }
                     if (fileList) {
-                        fileList.innerHTML = '';
+                        while (fileList.firstChild) {
+                            fileList.removeChild(fileList.firstChild);
+                        }
                     }
                 }
             });

@@ -1779,8 +1779,11 @@ function local_hlai_quizgen_render_step2(int $courseid, int $requestid): string 
                 debugging("HLAI Step 2 topic analysis DONE in {$analyzeduration}s: {$topiccount} topics found", DEBUG_DEVELOPER);
             } catch (Exception $e) {
                 $analyzeduration = round(microtime(true) - ($analyzestart ?? microtime(true)), 2);
-                debugging("HLAI Step 2 topic analysis FAILED after {$analyzeduration}s: " . $e->getMessage() .
-                    ' | Trace: ' . $e->getTraceAsString(), DEBUG_DEVELOPER);
+                debugging(
+                    "HLAI Step 2 topic analysis FAILED after {$analyzeduration}s: " .
+                    $e->getMessage() . " | " . $e->getTraceAsString(),
+                    DEBUG_DEVELOPER
+                );
                 $errors[] = get_string('error:analysisfailed', 'local_hlai_quizgen') . ': ' . $e->getMessage();
             }
 
