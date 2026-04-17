@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: moodle-hlai-quizgen
+    runtime: docker
+    plan: starter
+    region: frankfurt
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    healthCheckPath: /
+    envVars:
+      - key: MOODLE_URL
+        sync: false
+      - key: MOODLE_DB_HOST
+        sync: false
+      - key: MOODLE_DB_PORT
+        value: "3306"
+      - key: MOODLE_DB_NAME
+        sync: false
+      - key: MOODLE_DB_USER
+        sync: false
+      - key: MOODLE_DB_PASSWORD
+        sync: false
+      - key: MARIADB_CLIENT_ENABLE_SSL
+        value: "no"
+
+# Notes:
+# 1) Add a persistent disk to this web service mounted at /bitnami/moodledata.
+# 2) Create a MariaDB private service separately (mariadb:10.11) with its own disk,
+#    then set MOODLE_DB_* values above in Render dashboard.
+# 3) After first deploy, finish install/upgrade from Moodle web UI.
